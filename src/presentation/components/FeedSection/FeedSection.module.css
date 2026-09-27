@@ -1,0 +1,101 @@
+/* src/presentation/components/FeedSection/FeedSection.module.css */
+
+.section {
+  margin-bottom: var(--space-4);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 0 var(--side-gutter) var(--space-3);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  font-family: var(--font-family);
+}
+
+.sectionSub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── Carrusel horizontal ── */
+.carousel {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding: 0 var(--side-gutter) var(--space-2);
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carouselItem {
+  flex-shrink: 0;
+  width: 260px;
+  scroll-snap-align: start;
+}
+
+/* ── Feed principal (lista vertical) ── */
+.feedList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0 var(--side-gutter);
+}
+
+.feedListTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-family);
+}
+
+/* ── Estados vacío / carga / error ── */
+.empty {
+  text-align: center;
+  padding: var(--space-10) var(--side-gutter);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+}
+
+.emptyIcon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: var(--space-3);
+}
+
+.error {
+  text-align: center;
+  padding: var(--space-6) var(--side-gutter);
+  color: var(--color-error);
+  background: var(--color-error-bg);
+  border-radius: var(--radius-lg);
+  margin: 0 var(--side-gutter);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+}
+
+.skeleton {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  height: 160px;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
