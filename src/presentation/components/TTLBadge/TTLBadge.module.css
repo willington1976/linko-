@@ -1,0 +1,40 @@
+/* src/presentation/components/TTLBadge/TTLBadge.module.css */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family);
+  white-space: nowrap;
+  line-height: var(--line-height-tight);
+}
+
+.normal {
+  color: var(--color-ttl-normal);
+  background: var(--color-ttl-normal-bg);
+}
+
+.warning {
+  color: var(--color-ttl-warning);
+  background: var(--color-ttl-warning-bg);
+}
+
+.urgent {
+  color: var(--color-ttl-urgent);
+  background: var(--color-ttl-urgent-bg);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.expired {
+  color: var(--color-ttl-expired);
+  background: var(--color-ttl-expired-bg);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
