@@ -36,3 +36,7 @@ export interface Business {
   verified: boolean;
   createdAt: Date;
 }
+// Agregar al final del archivo existente:
+export const VALID_BUSINESS_CATEGORIES: BusinessCategory[] = [
+  'restaurante','tienda','taller','salud','educacion','servicios','construccion','otro',
+];
