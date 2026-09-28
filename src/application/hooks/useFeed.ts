@@ -1,4 +1,4 @@
-// src/application/hooks/useFeed.ts
+﻿// src/application/hooks/useFeed.ts
 
 import { useState, useEffect, useCallback } from 'react';
 import {
@@ -51,6 +51,7 @@ export function useFeed(category?: PublicationCategory) {
       (err) => {
         setState((prev) => ({ ...prev, error: err.message, loading: false }));
       },
+      category,
     );
 
     void loadSupplementary();
@@ -78,3 +79,4 @@ export function useFeed(category?: PublicationCategory) {
 
   return { ...state, refresh };
 }
+

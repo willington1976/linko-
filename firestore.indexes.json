@@ -1,20 +1,12 @@
-{
+﻿{
   "indexes": [
     {
-      "collectionGroup": "publications",
+      "collectionGroup": "businesses",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "publicationType", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "publications",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "publicationType", "order": "ASCENDING" },
-        { "fieldPath": "expiresAt", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        { "fieldPath": "membershipActive", "order": "ASCENDING" },
+        { "fieldPath": "membershipUntil",  "order": "ASCENDING" },
+        { "fieldPath": "__name__",         "order": "ASCENDING" }
       ]
     },
     {
@@ -22,7 +14,46 @@
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "membershipActive", "order": "ASCENDING" },
-        { "fieldPath": "membershipUntil", "order": "ASCENDING" }
+        { "fieldPath": "membershipUntil",  "order": "DESCENDING" },
+        { "fieldPath": "__name__",         "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "publications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "publicationType", "order": "ASCENDING" },
+        { "fieldPath": "createdAt",       "order": "DESCENDING" },
+        { "fieldPath": "__name__",        "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "publications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "publicationType", "order": "ASCENDING" },
+        { "fieldPath": "createdAt",       "order": "DESCENDING" },
+        { "fieldPath": "expiresAt",       "order": "DESCENDING" },
+        { "fieldPath": "__name__",        "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "publications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "publicationType", "order": "ASCENDING" },
+        { "fieldPath": "expiresAt",       "order": "ASCENDING" },
+        { "fieldPath": "createdAt",       "order": "DESCENDING" },
+        { "fieldPath": "__name__",        "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "publications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "category",  "order": "ASCENDING" },
+        { "fieldPath": "expiresAt", "order": "ASCENDING" },
+        { "fieldPath": "__name__",  "order": "ASCENDING" }
       ]
     }
   ],
