@@ -36,19 +36,19 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
   }, [publicationId]);
 
   if (loading) return <div className={styles.loading}>Cargando...</div>;
-  if (error)   return <div className={styles.error}>&#9888; {error}</div>;
-  if (!pub)    return <div className={styles.error}>Publicación no encontrada.</div>;
+  if (error)   return <div className={styles.error}>{'⚠️ '}{error}</div>;
+  if (!pub)    return <div className={styles.error}>{'Publicación no encontrada.'}</div>;
 
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`Hola, vi tu publicación "${pub.title}" en Linko`)}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+    `Hola, vi tu publicación "${pub.title}" en Linko`
+  )}`;
 
   return (
     <main className={styles.page}>
-      {/* Botón atrás */}
       <button className={styles.backBtn} onClick={onBack} aria-label="Volver">
-        &larr; Volver
+        {'← Volver'}
       </button>
 
-      {/* Galería de fotos */}
       {pub.photos.length > 0 && (
         <div className={styles.gallery}>
           <img
@@ -74,7 +74,6 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
       )}
 
       <div className={styles.content}>
-        {/* Meta */}
         <div className={styles.meta}>
           <span className={styles.category}>
             {CATEGORY_LABEL[pub.category] ?? pub.category}
@@ -88,21 +87,23 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
         <h1 className={styles.title}>{pub.title}</h1>
 
         {pub.price !== undefined && pub.price > 0 && (
-          <p className={styles.price}>${pub.price.toLocaleString('es-CO')} COP</p>
+          <p className={styles.price}>
+            {'$'}{pub.price.toLocaleString('es-CO')}{' COP'}
+          </p>
         )}
 
         <p className={styles.description}>{pub.description}</p>
 
-        {/* Autor */}
         <div className={styles.author}>
           <span className={styles.authorName}>
-            {pub.authorVerified && <span className={styles.verified}>&#10003;</span>}
+            {pub.authorVerified && (
+              <span className={styles.verified}>{'✓'}</span>
+            )}
             {pub.authorName}
           </span>
-          <span className={styles.location}>&#128205; {pub.location}</span>
+          <span className={styles.location}>{'📍 '}{pub.location}</span>
         </div>
 
-        {/* CTA WhatsApp */}
         
           href={whatsappUrl}
           target="_blank"
@@ -110,7 +111,7 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
           className={styles.whatsappBtn}
           aria-label="Contactar por WhatsApp"
         >
-          &#128172; Contactar por WhatsApp
+          {'💬 Contactar por WhatsApp'}
         </a>
       </div>
     </main>
