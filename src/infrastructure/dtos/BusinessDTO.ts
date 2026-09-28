@@ -36,7 +36,7 @@ export function mapDTOToBusiness(dto: BusinessDTO): Business {
 
   if (
     dto.createdAt == null ||
-    typeof (dto.createdAt as Record<string, unknown>).toDate !== 'function'
+    typeof (dto.createdAt as { toDate?: unknown }).toDate !== 'function'
   ) {
     throw new DTOValidationError(id, 'createdAt', 'debe ser Firestore Timestamp');
   }

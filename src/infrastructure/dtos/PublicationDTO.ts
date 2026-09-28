@@ -6,13 +6,13 @@ import type {
   PublicationIntent,
   PublicationStatus,
   PublicationType,
+  Publication,
 } from '../../domain/entities/Publication';
 import {
   VALID_CATEGORIES,
   VALID_INTENTS,
   VALID_STATUSES,
 } from '../../domain/entities/Publication';
-import type { Publication } from '../../domain/entities/Publication';
 import { DTOValidationError } from './DTOValidationError';
 
 export interface PublicationDTO {

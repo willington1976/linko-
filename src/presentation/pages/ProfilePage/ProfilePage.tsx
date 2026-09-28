@@ -6,7 +6,7 @@ import styles from './ProfilePage.module.css';
 const TEMP_USER = {
   displayName: 'Usuario Linko',
   email: 'usuario@linko.app',
-  role: 'user' as const,
+  role: 'user' as 'user' | 'business',
 };
 
 interface ProfilePageProps {

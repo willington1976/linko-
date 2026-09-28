@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Regla base: todo denegado salvo lo explícito ──────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ── Publicaciones: solo lectura pública; escritura solo via CF (Admin SDK) ─
+    match /publications/{pubId} {
+      allow read: if true;
+      allow create: if false; // solo Cloud Functions con Admin SDK
+      allow update: if false;
+      allow delete: if false;
+
+      // Subcollección privada: solo el autor autenticado
+      match /private/contact {
+        allow read: if request.auth != null
+                    && request.auth.uid == resource.data.authorId;
+        allow write: if false;
+      }
+    }
+
+    // ── Negocios: lectura pública; escritura solo via CF ──────────────────────
+    match /businesses/{bizId} {
+      allow read: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ── Usuarios: solo el propio usuario puede leer su perfil ────────────────
+    match /users/{userId} {
+      allow read:  if request.auth != null && request.auth.uid == userId;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ── Membresías: solo el dueño del negocio puede leer ─────────────────────
+    match /memberships/{memId} {
+      allow read: if request.auth != null
+                  && exists(/databases/$(database)/documents/businesses/$(resource.data.businessId))
+                  && get(/databases/$(database)/documents/businesses/$(resource.data.businessId)).data.ownerId == request.auth.uid;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}

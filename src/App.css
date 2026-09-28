@@ -1,0 +1,54 @@
+/* src/App.css */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-family);
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+.app {
+  max-width: var(--feed-max-width);
+  margin: 0 auto;
+  position: relative;
+  min-height: 100dvh;
+}
+
+.app-content {
+  /* espacio para navbar arriba y bottomnav abajo */
+  padding-top: 0;
+}
+
+.search-placeholder {
+  padding: var(--space-10) var(--side-gutter);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+}
+
+/* Scrollbar global discreta */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-divider); border-radius: 2px; }
+
+/* Selección de texto */
+::selection {
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-dark);
+}
