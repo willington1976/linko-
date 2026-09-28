@@ -14,15 +14,15 @@ interface PublicationDetailPageProps {
 const CATEGORY_LABEL: Record<string, string> = {
   empleo: 'Empleo',
   inmuebles: 'Inmuebles',
-  articulos: 'Artículos',
+  articulos: 'Articulos',
   servicios: 'Servicios',
   urgente: 'Urgente',
 };
 
 export function PublicationDetailPage({ publicationId, onBack }: PublicationDetailPageProps) {
-  const [pub, setPub]           = useState<Publication | null>(null);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState<string | null>(null);
+  const [pub, setPub] = useState<Publication | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [photoIdx, setPhotoIdx] = useState(0);
 
   useEffect(() => {
@@ -36,24 +36,28 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
   }, [publicationId]);
 
   if (loading) return <div className={styles.loading}>Cargando...</div>;
-  if (error)   return <div className={styles.error}>{'⚠️ '}{error}</div>;
-  if (!pub)    return <div className={styles.error}>{'Publicación no encontrada.'}</div>;
+  if (error) return <div className={styles.error}>{error}</div>;
+  if (!pub) return <div className={styles.error}>Publicacion no encontrada.</div>;
 
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
-    `Hola, vi tu publicación "${pub.title}" en Linko`
-  )}`;
+  const whatsappUrl =
+    'https://wa.me/?text=' +
+    encodeURIComponent('Hola, vi tu publicacion "' + pub.title + '" en Linko');
+
+  function handleWhatsApp() {
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  }
 
   return (
     <main className={styles.page}>
       <button className={styles.backBtn} onClick={onBack} aria-label="Volver">
-        {'← Volver'}
+        Volver
       </button>
 
       {pub.photos.length > 0 && (
         <div className={styles.gallery}>
           <img
             src={pub.photos[photoIdx]}
-            alt={`${pub.title} - foto ${String(photoIdx + 1)}`}
+            alt={pub.title}
             className={styles.mainPhoto}
           />
           {pub.photos.length > 1 && (
@@ -61,9 +65,8 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
               {pub.photos.map((url, i) => (
                 <button
                   key={url}
-                  className={`${styles.thumb} ${i === photoIdx ? styles.thumbActive : ''}`}
+                  className={i === photoIdx ? styles.thumbActive : styles.thumb}
                   onClick={() => setPhotoIdx(i)}
-                  aria-label={`Ver foto ${String(i + 1)}`}
                 >
                   <img src={url} alt="" />
                 </button>
@@ -78,7 +81,7 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
           <span className={styles.category}>
             {CATEGORY_LABEL[pub.category] ?? pub.category}
           </span>
-          <span className={`${styles.intent} ${styles[pub.intent]}`}>
+          <span className={styles.intent}>
             {pub.intent === 'ofrezco' ? 'Ofrezco' : 'Busco'}
           </span>
           <TTLBadge expiresAt={pub.expiresAt} />
@@ -88,31 +91,24 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
 
         {pub.price !== undefined && pub.price > 0 && (
           <p className={styles.price}>
-            {'$'}{pub.price.toLocaleString('es-CO')}{' COP'}
+            {pub.price.toLocaleString('es-CO') + ' COP'}
           </p>
         )}
 
         <p className={styles.description}>{pub.description}</p>
 
         <div className={styles.author}>
-          <span className={styles.authorName}>
-            {pub.authorVerified && (
-              <span className={styles.verified}>{'✓'}</span>
-            )}
-            {pub.authorName}
-          </span>
-          <span className={styles.location}>{'📍 '}{pub.location}</span>
+          <span className={styles.authorName}>{pub.authorName}</span>
+          <span className={styles.location}>{pub.location}</span>
         </div>
 
-        
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
           className={styles.whatsappBtn}
-          aria-label="Contactar por WhatsApp"
+          onClick={handleWhatsApp}
+          type="button"
         >
-          {'💬 Contactar por WhatsApp'}
-        </a>
+          Contactar por WhatsApp
+        </button>
       </div>
     </main>
   );
