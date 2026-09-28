@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+functions/node_modules/
+
+# Build outputs
+dist/
+functions/lib/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+service-account.json
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Vite
+*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
