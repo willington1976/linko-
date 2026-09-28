@@ -103,3 +103,31 @@ export function subscribeToFeed(
     onUpdate(results);
   }, onError);
 }
+
+// ─── Búsqueda por prefijo de título ──────────────────────────────────────────
+
+export async function searchPublications(
+  q: string,
+  category?: PublicationCategory,
+): Promise<Publication[]> {
+  if (!q.trim()) return fetchFeed({ category });
+
+  const end = q.trim() + '\uf8ff';
+  const now = new Date();
+  const constraints: QueryConstraint[] = [
+    where('title', '>=', q.trim()),
+    where('title', '<=', end),
+    where('expiresAt', '>', now),
+    limit(30),
+  ];
+
+  if (category) constraints.push(where('category', '==', category));
+
+  const snap = await getDocs(query(collection(db, COL), ...constraints));
+  const results: Publication[] = [];
+  for (const d of snap.docs) {
+    try { results.push(mapDTOToPublication(d.id, d.data() as PublicationDTO)); }
+    catch (err) { if (err instanceof DTOValidationError) console.warn((err as DTOValidationError).message); }
+  }
+  return results;
+}

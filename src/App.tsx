@@ -1,4 +1,4 @@
-// src/App.tsx
+﻿// src/App.tsx
 
 import { useState } from 'react';
 import { Navbar }    from './presentation/components/Navbar/Navbar';
@@ -7,11 +7,12 @@ import { HomePage }  from './presentation/pages/HomePage/HomePage';
 import { PublicationDetailPage } from './presentation/pages/PublicationDetailPage/PublicationDetailPage';
 import { CreatePublicationPage } from './presentation/pages/CreatePublicationPage/CreatePublicationPage';
 import { ProfilePage } from './presentation/pages/ProfilePage/ProfilePage';
+import { LoginPage }   from './presentation/pages/LoginPage/LoginPage';
+import { useAuth }     from './application/hooks/useAuth';
 import type { BottomNavTab } from './presentation/components/BottomNav/BottomNav';
 import './presentation/styles/tokens.css';
 import './App.css';
 
-// ── Rutas simples sin react-router (SPA manual) ──────────────────────────────
 type Route =
   | { screen: 'home' }
   | { screen: 'detail'; publicationId: string }
@@ -19,50 +20,45 @@ type Route =
   | { screen: 'profile' }
   | { screen: 'search' };
 
-// TEMP: reemplazar con Firebase Auth real en siguiente fase
-const TEMP_AUTH = {
-  uid:         'temp-user-001',
-  displayName: 'Usuario Linko',
-};
-
 export function App() {
-  const [route, setRoute]     = useState<Route>({ screen: 'home' });
+  const { user, loading, logout } = useAuth();
+  const [route, setRoute]         = useState<Route>({ screen: 'home' });
   const [activeTab, setActiveTab] = useState<BottomNavTab>('feed');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // ── Navegación ──────────────────────────────────────────────────────────────
-  const goHome   = () => { setRoute({ screen: 'home' });    setActiveTab('feed'); };
-  const goCreate = () => { setRoute({ screen: 'create' });  };
-  
-
-  const goDetail = (publicationId: string) => {
-    setRoute({ screen: 'detail', publicationId });
-  };
+  const goHome   = () => { setRoute({ screen: 'home' });   setActiveTab('feed'); };
+  const goCreate = () => { setRoute({ screen: 'create' }); };
+  const goDetail = (publicationId: string) => setRoute({ screen: 'detail', publicationId });
 
   const handleTabChange = (tab: BottomNavTab) => {
     setActiveTab(tab);
-    if (tab === 'feed')    setRoute({ screen: 'home' });
-    if (tab === 'perfil')  setRoute({ screen: 'profile' });
-    if (tab === 'buscar')  setRoute({ screen: 'search' });
-    if (tab === 'mis-publicaciones') setRoute({ screen: 'home' }); // placeholder
+    if (tab === 'feed')               setRoute({ screen: 'home' });
+    if (tab === 'perfil')             setRoute({ screen: 'profile' });
+    if (tab === 'buscar')             setRoute({ screen: 'search' });
+    if (tab === 'mis-publicaciones')  setRoute({ screen: 'home' }); // placeholder
   };
 
-  // ── Decidir si mostrar Navbar/BottomNav ────────────────────────────────────
   const hideChrome = route.screen === 'create';
+
+  if (loading) {
+    return <div className="app-loading">Cargando...</div>;
+  }
+
+  if (!user) {
+    return <LoginPage />;
+  }
 
   return (
     <div className="app">
-      {!hideChrome && (
-        <Navbar onSearch={setSearchQuery} />
-      )}
+      {!hideChrome && <Navbar onSearch={setSearchQuery} />}
 
-      {/* ── Contenido principal ── */}
       <div className="app-content">
         {route.screen === 'home' && (
           <HomePage
             onPublicationClick={goDetail}
-            onBusinessClick={(id) => console.log('business:', id)} // TODO: BusinessDetailPage
+            onBusinessClick={(id) => console.log('business:', id)}
             onPublicarClick={goCreate}
+            searchQuery={searchQuery}
           />
         )}
 
@@ -75,26 +71,26 @@ export function App() {
 
         {route.screen === 'create' && (
           <CreatePublicationPage
-            authorId={TEMP_AUTH.uid}
+            authorId={user.uid}
             onSuccess={(id) => { goDetail(id); }}
             onBack={goHome}
           />
         )}
 
         {route.screen === 'profile' && (
-          <ProfilePage onSignOut={goHome} />
+          <ProfilePage user={user} onSignOut={logout} />
         )}
 
         {route.screen === 'search' && (
           <div className="search-placeholder">
-            <p>🔍 Búsqueda: <strong>{searchQuery || '...'}</strong></p>
+            <p>Busqueda: <strong>{searchQuery || '...'}</strong></p>
           </div>
         )}
       </div>
 
-      {!hideChrome && (
-        <BottomNav active={activeTab} onChange={handleTabChange} />
-      )}
+      {!hideChrome && <BottomNav active={activeTab} onChange={handleTabChange} />}
     </div>
   );
 }
+
+

@@ -5,6 +5,7 @@ import {
   subscribeToFeed,
   fetchNuevoHoy,
   fetchFeed,
+  searchPublications,
 } from '../../infrastructure/repositories/PublicationRepository';
 import { fetchActiveBusinesses } from '../../infrastructure/repositories/BusinessRepository';
 import type { Publication } from '../../domain/entities/Publication';
@@ -19,7 +20,7 @@ interface FeedState {
   error:        string | null;
 }
 
-export function useFeed(category?: PublicationCategory) {
+export function useFeed(category?: PublicationCategory, searchQuery?: string) {
   const [state, setState] = useState<FeedState>({
     publications: [],
     nuevoHoy:     [],
@@ -41,29 +42,37 @@ export function useFeed(category?: PublicationCategory) {
   }, []);
 
   useEffect(() => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+    // Con searchQuery activo usamos fetch puntual, no listener en tiempo real
+    if (searchQuery && searchQuery.trim().length > 0) {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      searchPublications(searchQuery.trim(), category)
+        .then((publications) => setState((prev) => ({ ...prev, publications, loading: false })))
+        .catch((err: unknown) => setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: err instanceof Error ? err.message : 'Error en busqueda',
+        })));
+      return;
+    }
 
-    // Listener en tiempo real para el feed principal
+    // Sin searchQuery: listener en tiempo real
+    setState((prev) => ({ ...prev, loading: true, error: null }));
     const unsub = subscribeToFeed(
-      (publications) => {
-        setState((prev) => ({ ...prev, publications, loading: false }));
-      },
-      (err) => {
-        setState((prev) => ({ ...prev, error: err.message, loading: false }));
-      },
+      (publications) => setState((prev) => ({ ...prev, publications, loading: false })),
+      (err) => setState((prev) => ({ ...prev, error: err.message, loading: false })),
       category,
     );
-
     void loadSupplementary();
-
     return () => unsub();
-  }, [category, loadSupplementary]);
+  }, [category, searchQuery, loadSupplementary]);
 
   const refresh = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const [publications, nuevoHoy, businesses] = await Promise.all([
-        fetchFeed({ category }),
+        searchQuery?.trim()
+          ? searchPublications(searchQuery.trim(), category)
+          : fetchFeed({ category }),
         fetchNuevoHoy(),
         fetchActiveBusinesses(),
       ]);
@@ -75,8 +84,7 @@ export function useFeed(category?: PublicationCategory) {
         error: err instanceof Error ? err.message : 'Error al cargar el feed.',
       }));
     }
-  }, [category]);
+  }, [category, searchQuery]);
 
   return { ...state, refresh };
 }
-
