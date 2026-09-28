@@ -12,14 +12,17 @@ interface PublicationDetailPageProps {
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
-  empleo: 'Empleo', inmuebles: 'Inmuebles',
-  articulos: 'Artículos', servicios: 'Servicios', urgente: 'Urgente',
+  empleo: 'Empleo',
+  inmuebles: 'Inmuebles',
+  articulos: 'Artículos',
+  servicios: 'Servicios',
+  urgente: 'Urgente',
 };
 
 export function PublicationDetailPage({ publicationId, onBack }: PublicationDetailPageProps) {
-  const [pub, setPub]       = useState<Publication | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState<string | null>(null);
+  const [pub, setPub]           = useState<Publication | null>(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
   const [photoIdx, setPhotoIdx] = useState(0);
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
   }, [publicationId]);
 
   if (loading) return <div className={styles.loading}>Cargando...</div>;
-  if (error)   return <div className={styles.error}>⚠️ {error}</div>;
+  if (error)   return <div className={styles.error}>&#9888; {error}</div>;
   if (!pub)    return <div className={styles.error}>Publicación no encontrada.</div>;
 
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`Hola, vi tu publicación "${pub.title}" en Linko`)}`;
@@ -42,7 +45,7 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
     <main className={styles.page}>
       {/* Botón atrás */}
       <button className={styles.backBtn} onClick={onBack} aria-label="Volver">
-        ← Volver
+        &larr; Volver
       </button>
 
       {/* Galería de fotos */}
@@ -93,10 +96,10 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
         {/* Autor */}
         <div className={styles.author}>
           <span className={styles.authorName}>
-            {pub.authorVerified && <span className={styles.verified}>✓</span>}
+            {pub.authorVerified && <span className={styles.verified}>&#10003;</span>}
             {pub.authorName}
           </span>
-          <span className={styles.location}>📍 {pub.location}</span>
+          <span className={styles.location}>&#128205; {pub.location}</span>
         </div>
 
         {/* CTA WhatsApp */}
@@ -107,7 +110,7 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
           className={styles.whatsappBtn}
           aria-label="Contactar por WhatsApp"
         >
-          💬 Contactar por WhatsApp
+          &#128172; Contactar por WhatsApp
         </a>
       </div>
     </main>
