@@ -49,6 +49,7 @@ export function LoginPage() {
     signInEmail,
     signUpEmail,
     signInGuest,
+    error: globalError,
   } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'google' | 'email'>('google');
@@ -58,6 +59,9 @@ export function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const activeError = errorMessage || (globalError ? getAuthErrorMessage({ code: globalError, message: globalError }) : null);
+
 
   const handleGooglePopup = () => {
     setErrorMessage(null);
@@ -236,12 +240,13 @@ export function LoginPage() {
           {loading ? 'Ingresando...' : '👤 Continuar como invitado'}
         </button>
 
-        {errorMessage && (
+        {activeError && (
           <div className={styles.errorBox} role="alert">
             <strong>Causa del problema:</strong>
-            {errorMessage}
+            {activeError}
           </div>
         )}
+
       </div>
     </main>
   );

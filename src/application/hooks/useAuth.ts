@@ -25,9 +25,16 @@ export function useAuth() {
   const [state, setState] = useState<AuthState>({ user: null, loading: true, error: null });
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setState({ user, loading: false, error: null });
-    });
+    const unsub = onAuthStateChanged(
+      auth,
+      (user) => {
+        setState((prev) => ({ ...prev, user, loading: false }));
+      },
+      (err) => {
+        console.error('onAuthStateChanged error:', err);
+        setState((prev) => ({ ...prev, loading: false, error: err.message || String(err) }));
+      }
+    );
 
     getRedirectResult(auth)
       .then((result) => {
@@ -36,11 +43,19 @@ export function useAuth() {
         }
       })
       .catch((err) => {
-        console.warn('getRedirectResult warning:', err);
+        console.error('getRedirectResult error:', err);
+        if (err && err.code && err.code !== 'auth/redirect-cancelled-by-user') {
+          setState((prev) => ({
+            ...prev,
+            loading: false,
+            error: err.code || err.message || 'Error de redirección en autenticación.',
+          }));
+        }
       });
 
     return () => unsub();
   }, []);
+
 
   const signInWithGooglePopup = async () => {
     setState((prev) => ({ ...prev, error: null }));
