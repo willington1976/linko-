@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   GoogleAuthProvider,
   type User,
@@ -19,6 +20,11 @@ export function useAuth() {
   const [state, setState] = useState<AuthState>({ user: null, loading: true });
 
   useEffect(() => {
+    // Captura el resultado del redirect al volver de Google
+    getRedirectResult(auth).catch(() => {
+      // Si no hay redirect pendiente, ignora silenciosamente
+    });
+
     const unsub = onAuthStateChanged(auth, (user) => {
       setState({ user, loading: false });
     });
@@ -27,7 +33,7 @@ export function useAuth() {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    await signInWithRedirect(auth, provider);
   };
 
   const logout = async () => {
