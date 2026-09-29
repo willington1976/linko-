@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   signOut,
   GoogleAuthProvider,
   type User,
@@ -20,17 +19,6 @@ export function useAuth() {
   const [state, setState] = useState<AuthState>({ user: null, loading: true });
 
   useEffect(() => {
-    // Procesa el resultado del redirect antes de escuchar auth state
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          setState({ user: result.user, loading: false });
-        }
-      })
-      .catch((err) => {
-        console.error('Redirect result error:', err);
-      });
-
     const unsub = onAuthStateChanged(auth, (user) => {
       setState({ user, loading: false });
     });
@@ -39,7 +27,8 @@ export function useAuth() {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithRedirect(auth, provider);
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await signInWithPopup(auth, provider);
   };
 
   const logout = async () => {
