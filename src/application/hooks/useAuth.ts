@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInAnonymously,
@@ -25,56 +23,24 @@ export function useAuth() {
   const [state, setState] = useState<AuthState>({ user: null, loading: true, error: null });
 
   useEffect(() => {
-    let isMounted = true;
-
-    getRedirectResult(auth)
-      .then((result) => {
-        if (isMounted && result?.user) {
-          setState({ user: result.user, loading: false, error: null });
-        }
-      })
-      .catch((err) => {
-        console.error('getRedirectResult error:', err);
-        if (isMounted && err?.code && err.code !== 'auth/redirect-cancelled-by-user') {
-          setState((prev) => ({
-            ...prev,
-            loading: false,
-            error: err.code || err.message || 'Error de autenticación.',
-          }));
-        }
-      });
-
     const unsub = onAuthStateChanged(
       auth,
       (user) => {
-        if (isMounted) {
-          setState((prev) => ({ ...prev, user, loading: false }));
-        }
+        setState({ user, loading: false, error: null });
       },
       (err) => {
         console.error('onAuthStateChanged error:', err);
-        if (isMounted) {
-          setState((prev) => ({ ...prev, loading: false, error: err.message || String(err) }));
-        }
+        setState({ user: null, loading: false, error: err.message || String(err) });
       }
     );
 
-    return () => {
-      isMounted = false;
-      unsub();
-    };
+    return () => unsub();
   }, []);
 
   const signInWithGooglePopup = () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     return signInWithPopup(auth, provider);
-  };
-
-  const signInWithGoogleRedirect = () => {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    return signInWithRedirect(auth, provider);
   };
 
   const signInEmail = async (email: string, pass: string) => {
@@ -99,7 +65,6 @@ export function useAuth() {
   return {
     ...state,
     signInWithGooglePopup,
-    signInWithGoogleRedirect,
     signInEmail,
     signUpEmail,
     signInGuest,
