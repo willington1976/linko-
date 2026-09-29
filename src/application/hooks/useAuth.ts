@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  signInWithPopup,
+  signInWithRedirect,
   getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -56,17 +56,12 @@ export function useAuth() {
   }, []);
 
 
-  const signInWithGooglePopup = async () => {
-    // Do NOT call setState before signInWithPopup — any state update before
-    // the popup causes a React re-render that breaks Chrome's user-activation
-    // context, resulting in auth/popup-blocked.
+  const signInWithGoogle = () => {
+    // Use redirect flow — more reliable than popup in Chrome/PWA/Vercel production.
+    // getRedirectResult() in useEffect handles session completion on return.
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    const result = await signInWithPopup(auth, provider);
-    if (result?.user) {
-      setState({ user: result.user, loading: false, error: null });
-    }
-    return result;
+    return signInWithRedirect(auth, provider);
   };
 
 
@@ -91,7 +86,7 @@ export function useAuth() {
 
   return {
     ...state,
-    signInWithGooglePopup,
+    signInWithGoogle,
     signInEmail,
     signUpEmail,
     signInGuest,
