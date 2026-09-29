@@ -25,53 +25,40 @@ export function useAuth() {
   const [state, setState] = useState<AuthState>({ user: null, loading: true, error: null });
 
   useEffect(() => {
-    let isRedirectPending = true;
+    let unsub: (() => void) | undefined;
 
-    // 1. Process redirect result if coming back from Google redirect
+    // Wait for redirect result to resolve FIRST, THEN start the auth state listener.
+    // This prevents onAuthStateChanged from firing user=null before Firebase has
+    // processed the redirect token, which was causing the "return to login" loop.
     getRedirectResult(auth)
       .then((result) => {
-        isRedirectPending = false;
         if (result?.user) {
-          setState({ user: result.user, loading: false, error: null });
+          // Redirect just completed successfully — state will be set by onAuthStateChanged below
+          console.log('Redirect auth completed for:', result.user.email);
         }
       })
       .catch((err) => {
-        isRedirectPending = false;
-        console.error('getRedirectResult error:', err);
         if (err?.code && err.code !== 'auth/redirect-cancelled-by-user') {
-          setState({ user: null, loading: false, error: err.code || err.message });
+          console.error('getRedirectResult error:', err);
+          setState((prev) => ({ ...prev, error: err.code || err.message }));
         }
+      })
+      .finally(() => {
+        // Only after redirect result is resolved, subscribe to auth state.
+        // At this point Firebase has the correct user (or null) in its internal state.
+        unsub = onAuthStateChanged(
+          auth,
+          (user) => {
+            setState({ user, loading: false, error: null });
+          },
+          (err) => {
+            console.error('onAuthStateChanged error:', err);
+            setState({ user: null, loading: false, error: err.message || String(err) });
+          }
+        );
       });
 
-    // 2. Listen for auth state changes with buffer for redirect resolution
-    const unsub = onAuthStateChanged(
-      auth,
-      (user) => {
-        if (user) {
-          setState({ user, loading: false, error: null });
-        } else {
-          // Give getRedirectResult time to resolve before declaring user = null
-          setTimeout(() => {
-            if (auth.currentUser) {
-              setState({ user: auth.currentUser, loading: false, error: null });
-            } else if (!isRedirectPending) {
-              setState({ user: null, loading: false, error: null });
-            } else {
-              // Final check after 800ms
-              setTimeout(() => {
-                setState({ user: auth.currentUser, loading: false, error: null });
-              }, 300);
-            }
-          }, 500);
-        }
-      },
-      (err) => {
-        console.error('onAuthStateChanged error:', err);
-        setState({ user: null, loading: false, error: err.message || String(err) });
-      }
-    );
-
-    return () => unsub();
+    return () => unsub?.();
   }, []);
 
   const signInWithGooglePopup = () => {
