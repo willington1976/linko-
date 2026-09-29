@@ -3,7 +3,8 @@
 import { useState, useRef } from 'react';
 import { useCreatePublication } from '../../../application/hooks/useCreatePublication';
 import { getFieldError } from '../../../domain/validation/publicationValidation';
-import type { PublicationCategory, PublicationIntent } from '../../../domain/entities/Publication';
+import { CASANARE_MUNICIPALITIES } from '../../../domain/entities/Publication';
+import type { PublicationCategory, PublicationIntent, CasanareMunicipality } from '../../../domain/entities/Publication';
 import styles from './CreatePublicationPage.module.css';
 
 interface CreatePublicationPageProps {
@@ -15,20 +16,20 @@ interface CreatePublicationPageProps {
 export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePublicationPageProps) {
   const { loading, uploadProgress, error, submit, reset } = useCreatePublication(authorId);
 
-  const [title, setTitle]             = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory]       = useState<PublicationCategory>('articulos');
-  const [intent, setIntent]           = useState<PublicationIntent>('ofrezco');
-  const [location, setLocation]       = useState('');
-  const [price, setPrice]             = useState('');
-  const [contactPhone, setPhone]      = useState('');
-  const [photoFiles, setPhotoFiles]   = useState<File[]>([]);
-  const [fieldErrors, setFieldErrors] = useState<{ field: string; message: string }[]>([]);
+  const [title, setTitle]               = useState('');
+  const [description, setDescription]   = useState('');
+  const [category, setCategory]         = useState<PublicationCategory>('articulos');
+  const [intent, setIntent]             = useState<PublicationIntent>('ofrezco');
+  const [municipality, setMunicipality] = useState<CasanareMunicipality>('Yopal');
+  const [price, setPrice]               = useState('');
+  const [contactPhone, setPhone]        = useState('');
+  const [photoFiles, setPhotoFiles]     = useState<File[]>([]);
+  const [fieldErrors, setFieldErrors]   = useState<{ field: string; message: string }[]>([]);
 
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []).slice(0, 1); // personal = max 1
+    const files = Array.from(e.target.files ?? []).slice(0, 1);
     setPhotoFiles(files);
   };
 
@@ -39,7 +40,9 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
 
     const result = await submit({
       title, description, category, intent,
-      location, contactPhone,
+      department: 'casanare',
+      municipality,
+      contactPhone,
       price: price ? Number(price) : undefined,
       publicationType: 'personal',
       photoFiles,
@@ -53,22 +56,24 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
   return (
     <main className={styles.page}>
       <div className={styles.header}>
-        <button className={styles.backBtn} onClick={onBack} aria-label="Volver">←</button>
-        <h1 className={styles.pageTitle}>Nueva publicación</h1>
+        <button className={styles.backBtn} onClick={onBack} aria-label="Volver">
+          {'<'}
+        </button>
+        <h1 className={styles.pageTitle}>Nueva publicacion</h1>
       </div>
 
       <form className={styles.form} onSubmit={(e) => { void handleSubmit(e); }} noValidate>
 
-        {/* Categoría */}
+        {/* Categoria */}
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="category">Categoría</label>
+          <label className={styles.label} htmlFor="category">Categoria</label>
           <select
             id="category"
             className={styles.select}
             value={category}
             onChange={(e) => setCategory(e.target.value as PublicationCategory)}
           >
-            <option value="articulos">Artículos</option>
+            <option value="articulos">Articulos</option>
             <option value="empleo">Empleo</option>
             <option value="inmuebles">Inmuebles</option>
             <option value="servicios">Servicios</option>
@@ -78,7 +83,7 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
 
         {/* Intent */}
         <div className={styles.field}>
-          <label className={styles.label}>¿Qué haces?</label>
+          <label className={styles.label}>Que haces?</label>
           <div className={styles.intentGroup}>
             {(['ofrezco', 'busco'] as PublicationIntent[]).map((i) => (
               <button
@@ -87,15 +92,15 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
                 className={`${styles.intentBtn} ${intent === i ? styles.intentActive : ''}`}
                 onClick={() => setIntent(i)}
               >
-                {i === 'ofrezco' ? '✋ Ofrezco' : '🔍 Busco'}
+                {i === 'ofrezco' ? 'Ofrezco' : 'Busco'}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Título */}
+        {/* Titulo */}
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="title">Título *</label>
+          <label className={styles.label} htmlFor="title">Titulo *</label>
           <input
             id="title"
             className={`${styles.input} ${fe('title') ? styles.inputError : ''}`}
@@ -108,9 +113,9 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           {fe('title') && <span className={styles.errorMsg}>{fe('title')}</span>}
         </div>
 
-        {/* Descripción */}
+        {/* Descripcion */}
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="description">Descripción *</label>
+          <label className={styles.label} htmlFor="description">Descripcion *</label>
           <textarea
             id="description"
             className={`${styles.textarea} ${fe('description') ? styles.inputError : ''}`}
@@ -126,7 +131,7 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
 
         {/* Precio */}
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="price">Precio (COP) — opcional</label>
+          <label className={styles.label} htmlFor="price">Precio (COP) - opcional</label>
           <input
             id="price"
             className={styles.input}
@@ -138,23 +143,32 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           />
         </div>
 
-        {/* Ubicación */}
+        {/* Municipio */}
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="location">Ubicación *</label>
-          <input
-            id="location"
-            className={`${styles.input} ${fe('location') ? styles.inputError : ''}`}
-            type="text"
-            placeholder="Ej: Yopal, Casanare"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-          {fe('location') && <span className={styles.errorMsg}>{fe('location')}</span>}
+          <label className={styles.label} htmlFor="municipality">Municipio *</label>
+          <div className={styles.locationRow}>
+            <input
+              className={styles.inputDisabled}
+              value="Casanare"
+              disabled
+              readOnly
+            />
+            <select
+              id="municipality"
+              className={styles.select}
+              value={municipality}
+              onChange={(e) => setMunicipality(e.target.value as CasanareMunicipality)}
+            >
+              {CASANARE_MUNICIPALITIES.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* Teléfono */}
+        {/* Telefono */}
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="phone">Teléfono de contacto *</label>
+          <label className={styles.label} htmlFor="phone">Telefono de contacto *</label>
           <input
             id="phone"
             className={`${styles.input} ${fe('contactPhone') ? styles.inputError : ''}`}
@@ -168,13 +182,13 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
 
         {/* Foto */}
         <div className={styles.field}>
-          <label className={styles.label}>Foto (máx. 1)</label>
+          <label className={styles.label}>Foto (max. 1)</label>
           <button
             type="button"
             className={styles.photoBtn}
             onClick={() => fileRef.current?.click()}
           >
-            📷 {photoFiles.length > 0 ? photoFiles[0]!.name : 'Agregar foto'}
+            {photoFiles.length > 0 ? photoFiles[0]!.name : 'Agregar foto'}
           </button>
           <input
             ref={fileRef}
@@ -185,7 +199,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           />
         </div>
 
-        {/* Progreso de subida */}
         {loading && uploadProgress > 0 && uploadProgress < 100 && (
           <div className={styles.progressWrapper}>
             <div className={styles.progressBar} style={{ width: `${String(uploadProgress)}%` }} />
@@ -193,16 +206,10 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           </div>
         )}
 
-        {/* Error global */}
-        {error && <p className={styles.globalError}>⚠️ {error}</p>}
+        {error && <p className={styles.globalError}>{error}</p>}
 
-        {/* Submit */}
-        <button
-          type="submit"
-          className={styles.submitBtn}
-          disabled={loading}
-        >
-          {loading ? 'Publicando...' : '✅ Publicar'}
+        <button type="submit" className={styles.submitBtn} disabled={loading}>
+          {loading ? 'Publicando...' : 'Publicar'}
         </button>
       </form>
     </main>

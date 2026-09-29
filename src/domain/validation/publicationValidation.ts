@@ -1,23 +1,23 @@
-// src/domain/validation/publicationValidation.ts
+﻿// src/domain/validation/publicationValidation.ts
 
-import { VALID_CATEGORIES, VALID_INTENTS } from '../entities/Publication';
+import { VALID_CATEGORIES, VALID_INTENTS, CASANARE_MUNICIPALITIES } from '../entities/Publication';
 import type { PublicationCategory, PublicationIntent } from '../entities/Publication';
 
 export const PUBLICATION_LIMITS = {
-  title:        { min: 1,  max: 200 },
-  description:  { min: 1,  max: 2000 },
-  location:     { min: 1,  max: 100 },
-  price:        { min: 0,  max: 999_999_999 },
-  contactPhone: { min: 7,  max: 20 },
+  title:        { min: 1, max: 200 },
+  description:  { min: 1, max: 2000 },
+  price:        { min: 0, max: 999_999_999 },
+  contactPhone: { min: 7, max: 20 },
 } as const;
 
 export interface PublicationValidationInput {
-  title: string;
-  description: string;
-  category: string;
-  intent: string;
-  location: string;
-  price?: number;
+  title:        string;
+  description:  string;
+  category:     string;
+  intent:       string;
+  department:   string;
+  municipality: string;
+  price?:       number;
   contactPhone: string;
 }
 
@@ -27,7 +27,7 @@ export interface ValidationResult {
 }
 
 export interface ValidationError {
-  field: string;
+  field:   string;
   message: string;
 }
 
@@ -38,31 +38,28 @@ export function validatePublicationInput(
 
   const title = input.title.trim();
   if (title.length < PUBLICATION_LIMITS.title.min) {
-    errors.push({ field: 'title', message: 'El título es requerido.' });
+    errors.push({ field: 'title', message: 'El titulo es requerido.' });
   } else if (title.length > PUBLICATION_LIMITS.title.max) {
-    errors.push({ field: 'title', message: `El título no puede superar ${String(PUBLICATION_LIMITS.title.max)} caracteres.` });
+    errors.push({ field: 'title', message: `El titulo no puede superar ${String(PUBLICATION_LIMITS.title.max)} caracteres.` });
   }
 
   const description = input.description.trim();
   if (description.length < PUBLICATION_LIMITS.description.min) {
-    errors.push({ field: 'description', message: 'La descripción es requerida.' });
+    errors.push({ field: 'description', message: 'La descripcion es requerida.' });
   } else if (description.length > PUBLICATION_LIMITS.description.max) {
-    errors.push({ field: 'description', message: `La descripción no puede superar ${String(PUBLICATION_LIMITS.description.max)} caracteres.` });
+    errors.push({ field: 'description', message: `La descripcion no puede superar ${String(PUBLICATION_LIMITS.description.max)} caracteres.` });
   }
 
   if (!VALID_CATEGORIES.includes(input.category as PublicationCategory)) {
-    errors.push({ field: 'category', message: 'Categoría no válida.' });
+    errors.push({ field: 'category', message: 'Categoria no valida.' });
   }
 
   if (!VALID_INTENTS.includes(input.intent as PublicationIntent)) {
-    errors.push({ field: 'intent', message: 'Intención no válida. Usa "busco" u "ofrezco".' });
+    errors.push({ field: 'intent', message: 'Intencion no valida.' });
   }
 
-  const location = input.location.trim();
-  if (location.length < PUBLICATION_LIMITS.location.min) {
-    errors.push({ field: 'location', message: 'La ubicación es requerida.' });
-  } else if (location.length > PUBLICATION_LIMITS.location.max) {
-    errors.push({ field: 'location', message: `La ubicación no puede superar ${String(PUBLICATION_LIMITS.location.max)} caracteres.` });
+  if (!(CASANARE_MUNICIPALITIES as readonly string[]).includes(input.municipality)) {
+    errors.push({ field: 'municipality', message: 'Municipio no valido.' });
   }
 
   if (input.price !== undefined) {
@@ -73,7 +70,7 @@ export function validatePublicationInput(
 
   const phone = input.contactPhone.trim();
   if (phone.length < PUBLICATION_LIMITS.contactPhone.min || phone.length > PUBLICATION_LIMITS.contactPhone.max) {
-    errors.push({ field: 'contactPhone', message: 'Número de contacto inválido.' });
+    errors.push({ field: 'contactPhone', message: 'Numero de contacto invalido.' });
   }
 
   return { valid: errors.length === 0, errors };

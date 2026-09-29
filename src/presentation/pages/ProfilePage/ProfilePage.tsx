@@ -1,38 +1,41 @@
 // src/presentation/pages/ProfilePage/ProfilePage.tsx
 
+import type { User } from 'firebase/auth';
 import styles from './ProfilePage.module.css';
 
-// Placeholder — auth real se integra en siguiente fase
-const TEMP_USER = {
-  displayName: 'Usuario Linko',
-  email: 'usuario@linko.app',
-  role: 'user' as 'user' | 'business',
-};
-
 interface ProfilePageProps {
+  user: User;
   onSignOut?: () => void;
+  onRegistrarNegocio?: () => void;
 }
 
-export function ProfilePage({ onSignOut }: ProfilePageProps) {
+export function ProfilePage({ user, onSignOut, onRegistrarNegocio }: ProfilePageProps) {
+  const initial = (user.displayName ?? user.email ?? 'U').charAt(0).toUpperCase();
+
   return (
     <main className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.avatar}>
-          {TEMP_USER.displayName.charAt(0).toUpperCase()}
-        </div>
-        <h2 className={styles.name}>{TEMP_USER.displayName}</h2>
-        <p className={styles.email}>{TEMP_USER.email}</p>
-        <span className={styles.role}>
-          {TEMP_USER.role === 'business' ? '🏪 Negocio' : '👤 Personal'}
-        </span>
+        {user.photoURL ? (
+          <img src={user.photoURL} alt="avatar" className={styles.avatar} referrerPolicy="no-referrer" />
+        ) : (
+          <div className={styles.avatar}>{initial}</div>
+        )}
+        <h2 className={styles.name}>{user.displayName ?? 'Usuario'}</h2>
+        <p className={styles.email}>{user.email}</p>
+        <span className={styles.role}>Personal</span>
       </div>
 
       <div className={styles.actions}>
-        <button className={styles.actionBtn}>📋 Mis publicaciones</button>
-        <button className={styles.actionBtn}>⚙️ Configuración</button>
+        <button className={styles.actionBtn}>Mis publicaciones</button>
+        <button className={styles.actionBtn}>Configuracion</button>
+        {onRegistrarNegocio && (
+          <button className={styles.bizBtn} onClick={onRegistrarNegocio}>
+            🏪 Registrar mi negocio
+          </button>
+        )}
         {onSignOut && (
-          <button className={`${styles.actionBtn} ${styles.signOut}`} onClick={onSignOut}>
-            🚪 Cerrar sesión
+          <button className={styles.signOut} onClick={onSignOut}>
+            Cerrar sesion
           </button>
         )}
       </div>

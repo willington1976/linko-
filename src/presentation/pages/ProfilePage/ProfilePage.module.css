@@ -80,7 +80,34 @@
   transition: background var(--transition-fast);
 }
 
-.actionBtn:last-child { border-bottom: none; }
 .actionBtn:hover { background: var(--color-surface-hover); }
 
-.signOut { color: var(--color-error); }
+.bizBtn {
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: none;
+  border-bottom: 1px solid var(--color-divider);
+  background: transparent;
+  text-align: left;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: #B84A32;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.bizBtn:hover { background: #fff5f3; }
+
+.signOut {
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: var(--color-error);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.signOut:hover { background: var(--color-surface-hover); }

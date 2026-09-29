@@ -38,6 +38,30 @@ export const VALID_STATUSES: PublicationStatus[] = [
   'conseguida',
 ];
 
+export const CASANARE_MUNICIPALITIES = [
+  'Aguazul',
+  'Chameza',
+  'Hato Corozal',
+  'La Salina',
+  'Mani',
+  'Monterrey',
+  'Nunchia',
+  'Orocue',
+  'Paz de Ariporo',
+  'Pore',
+  'Recetor',
+  'Sabanalarga',
+  'Sacama',
+  'San Luis de Palenque',
+  'Tamara',
+  'Tauramena',
+  'Trinidad',
+  'Villanueva',
+  'Yopal',
+] as const;
+
+export type CasanareMunicipality = typeof CASANARE_MUNICIPALITIES[number];
+
 export interface Publication {
   id: string;
   title: string;
@@ -45,21 +69,18 @@ export interface Publication {
   category: PublicationCategory;
   intent: PublicationIntent;
   price?: number;
-  location: string;
-  distanceKm?: number;
+  department: string;
+  municipality: CasanareMunicipality;
 
-  // Tipo y fotos
   publicationType: PublicationType;
-  photos: string[];        // [] para personal (máx 1), hasta 5 para business
-  businessId?: string;     // solo si publicationType === 'business'
+  photos: string[];
+  businessId?: string;
 
-  // Autor
   authorId: string;
   authorName: string;
   authorVerified: boolean;
   authorCompletedCount: number;
 
-  // Estado y tiempo
   status: PublicationStatus;
   ttlHours: number;
   createdAt: Date;

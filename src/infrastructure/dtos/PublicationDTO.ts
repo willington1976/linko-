@@ -7,111 +7,87 @@ import type {
   PublicationStatus,
   PublicationType,
   Publication,
+  CasanareMunicipality,
 } from '../../domain/entities/Publication';
 import {
   VALID_CATEGORIES,
   VALID_INTENTS,
   VALID_STATUSES,
+  CASANARE_MUNICIPALITIES,
 } from '../../domain/entities/Publication';
 import { DTOValidationError } from './DTOValidationError';
 
 export interface PublicationDTO {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  intent: string;
-  price?: number;
-  location: string;
-  distanceKm?: number;
-  publicationType: string;
-  photos: string[];
-  businessId?: string;
-  authorId: string;
-  authorName: string;
-  authorVerified: boolean;
+  title:                string;
+  description:          string;
+  category:             string;
+  intent:               string;
+  price?:               number;
+  department:           string;
+  municipality:         string;
+  publicationType:      string;
+  photos:               string[];
+  businessId?:          string;
+  authorId:             string;
+  authorName:           string;
+  authorVerified:       boolean;
   authorCompletedCount: number;
-  status: string;
-  ttlHours: number;
-  createdAt: Timestamp;
-  expiresAt: Timestamp;
-  renewedAt?: Timestamp;
+  status:               string;
+  ttlHours:             number;
+  createdAt:            Timestamp;
+  expiresAt:            Timestamp;
+  renewedAt?:           Timestamp;
 }
 
-function assertString(docId: string, field: string, value: unknown): string {
-  if (typeof value !== 'string' || value.trim() === '') {
-    throw new DTOValidationError(docId, field, 'debe ser string no vacío');
+export function mapDTOToPublication(id: string, dto: PublicationDTO): Publication {
+  if (!dto.title || typeof dto.title !== 'string') {
+    throw new DTOValidationError(id, 'title', 'requerido');
   }
-  return value;
-}
-
-function assertNumber(docId: string, field: string, value: unknown): number {
-  if (typeof value !== 'number' || !isFinite(value)) {
-    throw new DTOValidationError(docId, field, 'debe ser número finito');
+  if (!VALID_CATEGORIES.includes(dto.category as PublicationCategory)) {
+    throw new DTOValidationError(id, 'category', `valor invalido: ${dto.category}`);
   }
-  return value;
-}
-
-function assertBoolean(docId: string, field: string, value: unknown): boolean {
-  if (typeof value !== 'boolean') {
-    throw new DTOValidationError(docId, field, 'debe ser boolean');
+  if (!VALID_INTENTS.includes(dto.intent as PublicationIntent)) {
+    throw new DTOValidationError(id, 'intent', `valor invalido: ${dto.intent}`);
   }
-  return value;
-}
-
-function assertTimestamp(docId: string, field: string, value: unknown): Timestamp {
+  if (!VALID_STATUSES.includes(dto.status as PublicationStatus)) {
+    throw new DTOValidationError(id, 'status', `valor invalido: ${dto.status}`);
+  }
+  if (!(CASANARE_MUNICIPALITIES as readonly string[]).includes(dto.municipality)) {
+    throw new DTOValidationError(id, 'municipality', `valor invalido: ${dto.municipality}`);
+  }
   if (
-    value == null ||
-    typeof (value as Record<string, unknown>).toDate !== 'function'
+    dto.createdAt == null ||
+    typeof (dto.createdAt as { toDate?: unknown }).toDate !== 'function'
   ) {
-    throw new DTOValidationError(docId, field, 'debe ser Firestore Timestamp');
+    throw new DTOValidationError(id, 'createdAt', 'debe ser Firestore Timestamp');
   }
-  return value as Timestamp;
-}
-
-export function mapDTOToPublication(dto: PublicationDTO): Publication {
-  const id = dto.id;
-
-  const category = assertString(id, 'category', dto.category);
-  if (!VALID_CATEGORIES.includes(category as PublicationCategory)) {
-    throw new DTOValidationError(id, 'category', `valor inválido: ${category}`);
-  }
-
-  const intent = assertString(id, 'intent', dto.intent);
-  if (!VALID_INTENTS.includes(intent as PublicationIntent)) {
-    throw new DTOValidationError(id, 'intent', `valor inválido: ${intent}`);
-  }
-
-  const status = assertString(id, 'status', dto.status);
-  if (!VALID_STATUSES.includes(status as PublicationStatus)) {
-    throw new DTOValidationError(id, 'status', `valor inválido: ${status}`);
-  }
-
-  const publicationType = assertString(id, 'publicationType', dto.publicationType);
-  if (publicationType !== 'personal' && publicationType !== 'business') {
-    throw new DTOValidationError(id, 'publicationType', `valor inválido: ${publicationType}`);
+  if (
+    dto.expiresAt == null ||
+    typeof (dto.expiresAt as { toDate?: unknown }).toDate !== 'function'
+  ) {
+    throw new DTOValidationError(id, 'expiresAt', 'debe ser Firestore Timestamp');
   }
 
   return {
     id,
-    title:                assertString(id, 'title', dto.title),
-    description:          assertString(id, 'description', dto.description),
-    category:             category as PublicationCategory,
-    intent:               intent as PublicationIntent,
+    title:                dto.title,
+    description:          dto.description ?? '',
+    category:             dto.category as PublicationCategory,
+    intent:               dto.intent as PublicationIntent,
     price:                dto.price,
-    location:             assertString(id, 'location', dto.location),
-    distanceKm:           dto.distanceKm,
-    publicationType:      publicationType as PublicationType,
+    department:           dto.department ?? 'casanare',
+    municipality:         dto.municipality as CasanareMunicipality,
+    publicationType:      dto.publicationType as PublicationType,
     photos:               Array.isArray(dto.photos) ? dto.photos : [],
     businessId:           dto.businessId,
-    authorId:             assertString(id, 'authorId', dto.authorId),
-    authorName:           assertString(id, 'authorName', dto.authorName),
-    authorVerified:       assertBoolean(id, 'authorVerified', dto.authorVerified),
-    authorCompletedCount: assertNumber(id, 'authorCompletedCount', dto.authorCompletedCount),
-    status:               status as PublicationStatus,
-    ttlHours:             assertNumber(id, 'ttlHours', dto.ttlHours),
-    createdAt:            assertTimestamp(id, 'createdAt', dto.createdAt).toDate(),
-    expiresAt:            assertTimestamp(id, 'expiresAt', dto.expiresAt).toDate(),
-    renewedAt:            dto.renewedAt ? dto.renewedAt.toDate() : undefined,
+    authorId:             dto.authorId,
+    authorName:           dto.authorName ?? '',
+    authorVerified:       dto.authorVerified ?? false,
+    authorCompletedCount: dto.authorCompletedCount ?? 0,
+    status:               dto.status as PublicationStatus,
+    ttlHours:             dto.ttlHours,
+    createdAt:            dto.createdAt.toDate(),
+    expiresAt:            dto.expiresAt.toDate(),
+    renewedAt:            dto.renewedAt?.toDate(),
   };
 }

@@ -1,0 +1,126 @@
+/* src/presentation/pages/MyPublicationsPage/MyPublicationsPage.module.css */
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg, #f5f7fa);
+  padding-bottom: calc(var(--bottombar-height, 64px) + var(--space-8, 2rem));
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4, 1rem) var(--side-gutter, 1rem);
+  background: var(--color-surface, #fff);
+  border-bottom: 1px solid var(--color-divider, #e5e7eb);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #111827);
+  margin: 0;
+}
+
+.newBtn {
+  padding: 0.45rem 1rem;
+  background: var(--color-primary, #2980b9);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full, 2rem);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.newBtn:hover { background: #2471a3; }
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4, 1rem);
+  padding: var(--space-4, 1rem) var(--side-gutter, 1rem);
+}
+
+/* ── Estados ── */
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-12, 3rem) var(--side-gutter, 1rem);
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 0.95rem;
+}
+
+.spinner {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--color-divider, #e5e7eb);
+  border-top-color: var(--color-primary, #2980b9);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.errorMsg {
+  color: #ef4444;
+  margin: 0;
+  text-align: center;
+}
+
+.retryBtn {
+  padding: 0.5rem 1.25rem;
+  border: 1.5px solid var(--color-primary, #2980b9);
+  border-radius: var(--radius-full, 2rem);
+  background: transparent;
+  color: var(--color-primary, #2980b9);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Empty state ── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-12, 3rem) var(--side-gutter, 1rem);
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.emptyText {
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.emptyBtn {
+  padding: 0.65rem 1.5rem;
+  background: var(--color-primary, #2980b9);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full, 2rem);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.emptyBtn:hover { background: #2471a3; }

@@ -8,7 +8,6 @@ const Publication_1 = require("../entities/Publication");
 exports.PUBLICATION_LIMITS = {
     title: { min: 1, max: 200 },
     description: { min: 1, max: 2000 },
-    location: { min: 1, max: 100 },
     price: { min: 0, max: 999999999 },
     contactPhone: { min: 7, max: 20 },
 };
@@ -16,30 +15,26 @@ function validatePublicationInput(input) {
     const errors = [];
     const title = input.title.trim();
     if (title.length < exports.PUBLICATION_LIMITS.title.min) {
-        errors.push({ field: 'title', message: 'El título es requerido.' });
+        errors.push({ field: 'title', message: 'El titulo es requerido.' });
     }
     else if (title.length > exports.PUBLICATION_LIMITS.title.max) {
-        errors.push({ field: 'title', message: `El título no puede superar ${String(exports.PUBLICATION_LIMITS.title.max)} caracteres.` });
+        errors.push({ field: 'title', message: `El titulo no puede superar ${String(exports.PUBLICATION_LIMITS.title.max)} caracteres.` });
     }
     const description = input.description.trim();
     if (description.length < exports.PUBLICATION_LIMITS.description.min) {
-        errors.push({ field: 'description', message: 'La descripción es requerida.' });
+        errors.push({ field: 'description', message: 'La descripcion es requerida.' });
     }
     else if (description.length > exports.PUBLICATION_LIMITS.description.max) {
-        errors.push({ field: 'description', message: `La descripción no puede superar ${String(exports.PUBLICATION_LIMITS.description.max)} caracteres.` });
+        errors.push({ field: 'description', message: `La descripcion no puede superar ${String(exports.PUBLICATION_LIMITS.description.max)} caracteres.` });
     }
     if (!Publication_1.VALID_CATEGORIES.includes(input.category)) {
-        errors.push({ field: 'category', message: 'Categoría no válida.' });
+        errors.push({ field: 'category', message: 'Categoria no valida.' });
     }
     if (!Publication_1.VALID_INTENTS.includes(input.intent)) {
-        errors.push({ field: 'intent', message: 'Intención no válida. Usa "busco" u "ofrezco".' });
+        errors.push({ field: 'intent', message: 'Intencion no valida.' });
     }
-    const location = input.location.trim();
-    if (location.length < exports.PUBLICATION_LIMITS.location.min) {
-        errors.push({ field: 'location', message: 'La ubicación es requerida.' });
-    }
-    else if (location.length > exports.PUBLICATION_LIMITS.location.max) {
-        errors.push({ field: 'location', message: `La ubicación no puede superar ${String(exports.PUBLICATION_LIMITS.location.max)} caracteres.` });
+    if (!Publication_1.CASANARE_MUNICIPALITIES.includes(input.municipality)) {
+        errors.push({ field: 'municipality', message: 'Municipio no valido.' });
     }
     if (input.price !== undefined) {
         if (input.price < exports.PUBLICATION_LIMITS.price.min || input.price > exports.PUBLICATION_LIMITS.price.max) {
@@ -48,7 +43,7 @@ function validatePublicationInput(input) {
     }
     const phone = input.contactPhone.trim();
     if (phone.length < exports.PUBLICATION_LIMITS.contactPhone.min || phone.length > exports.PUBLICATION_LIMITS.contactPhone.max) {
-        errors.push({ field: 'contactPhone', message: 'Número de contacto inválido.' });
+        errors.push({ field: 'contactPhone', message: 'Numero de contacto invalido.' });
     }
     return { valid: errors.length === 0, errors };
 }

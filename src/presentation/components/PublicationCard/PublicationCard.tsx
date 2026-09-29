@@ -80,7 +80,7 @@ export function PublicationCard({ publication, onClick }: PublicationCardProps) 
             )}
             {publication.authorName}
           </span>
-          <span className={styles.location}>📍 {publication.location}</span>
+          <span className={styles.location}>📍 {publication.municipality}</span>
         </div>
       </div>
     </article>

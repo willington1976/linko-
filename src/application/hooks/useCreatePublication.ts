@@ -11,31 +11,31 @@ import { validatePublicationInput } from '../../domain/validation/publicationVal
 import type { CreatePublicationInput, CreatePublicationResult } from '../../domain/usecases/CreatePublication';
 
 interface UseCreatePublicationState {
-  loading:       boolean;
-  uploadProgress: number; // 0-100
-  error:         string | null;
-  result:        CreatePublicationResult | null;
+  loading:        boolean;
+  uploadProgress: number;
+  error:          string | null;
+  result:         CreatePublicationResult | null;
 }
 
 export function useCreatePublication(authorId: string) {
   const [state, setState] = useState<UseCreatePublicationState>({
-    loading:       false,
+    loading:        false,
     uploadProgress: 0,
-    error:         null,
-    result:        null,
+    error:          null,
+    result:         null,
   });
 
   const submit = useCallback(
     async (input: Omit<CreatePublicationInput, 'photos'> & { photoFiles: File[] }) => {
       setState({ loading: true, uploadProgress: 0, error: null, result: null });
 
-      // Validación cliente
       const validation = validatePublicationInput({
         title:        input.title,
         description:  input.description,
         category:     input.category,
         intent:       input.intent,
-        location:     input.location,
+        department:   input.department,
+        municipality: input.municipality,
         price:        input.price,
         contactPhone: input.contactPhone,
       });
@@ -44,13 +44,12 @@ export function useCreatePublication(authorId: string) {
         setState((prev) => ({
           ...prev,
           loading: false,
-          error: validation.errors[0]?.message ?? 'Error de validación.',
+          error: validation.errors[0]?.message ?? 'Error de validacion.',
         }));
         return null;
       }
 
       try {
-        // Subir fotos primero
         const photoUrls: string[] = [];
         for (let i = 0; i < input.photoFiles.length; i++) {
           const file = input.photoFiles[i]!;
@@ -67,13 +66,20 @@ export function useCreatePublication(authorId: string) {
           photoUrls.push(url);
         }
 
-        // Llamar Cloud Function
+        // Construir location y municipality para la Cloud Function
+        const location = `${input.department}, ${input.municipality}`;
+
         const fn = httpsCallable<CreatePublicationInput, CreatePublicationResult>(
           functions,
           'createPublication',
         );
 
-        const response = await fn({ ...input, photos: photoUrls });
+        const response = await fn({
+          ...input,
+          location,
+          municipality: input.municipality,
+          photos: photoUrls,
+        });
         const result: CreatePublicationResult = {
           ...response.data,
           expiresAt: new Date(response.data.expiresAt),

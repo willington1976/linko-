@@ -40,19 +40,29 @@ const https_1 = require("firebase-functions/v2/https");
 const ttlRules_1 = require("../../src/domain/rules/ttlRules");
 const publicationValidation_1 = require("../../src/domain/validation/publicationValidation");
 const membershipRules_1 = require("../../src/domain/rules/membershipRules");
+function titleToKeywords(title) {
+    return [...new Set(title.toLowerCase().normalize('NFD')
+            .replace(/[̀-ͯ]/g, '')
+            .replace(/[^a-z0-9\s]/g, ' ')
+            .split(/\s+/)
+            .filter((w) => w.length >= 2))];
+}
 exports.createPublication = (0, https_1.onCall)({ region: 'us-central1', enforceAppCheck: false }, async (request) => {
     if (!request.auth) {
         throw new https_1.HttpsError('unauthenticated', 'Debes iniciar sesión.');
     }
     const uid = request.auth.uid;
     const data = request.data;
+    // Extraer municipio del location o usar el campo directo
+    const municipality = data.municipality ?? data.location?.split(',')[1]?.trim() ?? '';
     // Validación de campos
     const validation = (0, publicationValidation_1.validatePublicationInput)({
         title: data.title,
         description: data.description,
         category: data.category,
         intent: data.intent,
-        location: data.location,
+        department: 'casanare',
+        municipality,
         price: data.price,
         contactPhone: data.contactPhone,
     });
@@ -86,35 +96,47 @@ exports.createPublication = (0, https_1.onCall)({ region: 'us-central1', enforce
             throw new https_1.HttpsError('invalid-argument', `Máximo ${String(membershipRules_1.MAX_PHOTOS_PERSONAL)} foto para publicaciones personales.`);
         }
     }
-    // Obtener datos del autor
+    // Obtener datos del autor — primero Firestore, fallback a Firebase Auth
+    let authorName = '';
+    let authorVerified = false;
+    let authorCompletedCount = 0;
     const userSnap = await db.collection('users').doc(uid).get();
-    if (!userSnap.exists) {
-        throw new https_1.HttpsError('not-found', 'Usuario no encontrado.');
+    if (userSnap.exists) {
+        const userData = userSnap.data();
+        authorName = userData['displayName'] ?? '';
+        authorVerified = userData['verified'] ?? false;
+        authorCompletedCount = userData['completedCount'] ?? 0;
     }
-    const userData = userSnap.data();
+    else {
+        // Fallback: leer desde Firebase Auth
+        const authUser = await admin.auth().getUser(uid);
+        authorName = authUser.displayName ?? authUser.email ?? '';
+    }
     const now = new Date();
     const ttlHours = ttlRules_1.TTL_HOURS_BY_CATEGORY[data.category];
-    // Publicaciones de negocio no expiran (TTL altísimo simulado con 87600h = 10 años)
     const expiresAt = data.publicationType === 'business'
         ? new Date(now.getTime() + 1000 * 60 * 60 * 87600)
         : (0, ttlRules_1.computeExpiresAt)(now, data.category);
+    // Extraer municipio del location o usar el campo directo
     const pubRef = db.collection('publications').doc();
     const batch = db.batch();
-    // Documento principal
     batch.set(pubRef, {
         title: data.title.trim(),
+        titleLower: data.title.trim().toLowerCase(),
+        keywords: titleToKeywords(data.title.trim()),
         description: data.description.trim(),
         category: data.category,
         intent: data.intent,
         price: data.price ?? null,
         location: data.location.trim(),
+        municipality,
         publicationType: data.publicationType,
         photos: data.photos,
         businessId: data.businessId ?? null,
         authorId: uid,
-        authorName: userData['displayName'] ?? '',
-        authorVerified: userData['verified'] ?? false,
-        authorCompletedCount: userData['completedCount'] ?? 0,
+        authorName,
+        authorVerified,
+        authorCompletedCount,
         status: 'activa',
         ttlHours,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),

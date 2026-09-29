@@ -99,7 +99,7 @@ export function PublicationDetailPage({ publicationId, onBack }: PublicationDeta
 
         <div className={styles.author}>
           <span className={styles.authorName}>{pub.authorName}</span>
-          <span className={styles.location}>{pub.location}</span>
+          <span className={styles.location}>{pub.municipality}</span>
         </div>
 
         <button
