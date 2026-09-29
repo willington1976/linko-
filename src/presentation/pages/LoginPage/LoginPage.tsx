@@ -45,6 +45,7 @@ function getAuthErrorMessage(err: any): string {
 export function LoginPage() {
   const {
     signInWithGooglePopup,
+    signInWithGoogleRedirect,
     signInEmail,
     signUpEmail,
     signInGuest,
@@ -62,15 +63,33 @@ export function LoginPage() {
   const activeError = errorMessage || (globalError ? getAuthErrorMessage({ code: globalError, message: globalError }) : null);
 
 
-  const handleGooglePopup = () => {
+  const handleGoogle = async () => {
     setErrorMessage(null);
     setLoading(true);
-    signInWithGooglePopup()
-      .catch((err: any) => {
-        console.error('Google Popup Error:', err);
+
+    try {
+      // 1. Synchronously trigger popup on user click
+      await signInWithGooglePopup();
+    } catch (err: any) {
+      console.error('Google Sign-In Error:', err);
+
+      // 2. If browser/DevTools mobile mode blocks popups, fallback to redirect automatically!
+      if (err?.code === 'auth/popup-blocked') {
+        console.log('Popup blocked, executing redirect auth...');
+        try {
+          await signInWithGoogleRedirect();
+        } catch (redirectErr: any) {
+          console.error('Google Redirect Error:', redirectErr);
+          setErrorMessage(getAuthErrorMessage(redirectErr));
+          setLoading(false);
+        }
+      } else if (err?.code !== 'auth/popup-closed-by-user') {
         setErrorMessage(getAuthErrorMessage(err));
         setLoading(false);
-      });
+      } else {
+        setLoading(false);
+      }
+    }
   };
 
 
@@ -136,7 +155,7 @@ export function LoginPage() {
           <div>
             <button
               className={styles.googleBtn}
-              onClick={handleGooglePopup}
+              onClick={handleGoogle}
               disabled={loading}
               type="button"
             >
