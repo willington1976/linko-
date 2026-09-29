@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
   signInWithPopup,
-  signInWithRedirect,
   getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -57,18 +56,16 @@ export function useAuth() {
   }, []);
 
 
-  const signInWithGooglePopup = () => {
+  const signInWithGooglePopup = async () => {
+    setState((prev) => ({ ...prev, error: null }));
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    return signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    if (result?.user) {
+      setState({ user: result.user, loading: false, error: null });
+    }
+    return result;
   };
-
-  const signInWithGoogleRedirect = () => {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    return signInWithRedirect(auth, provider);
-  };
-
 
   const signInEmail = async (email: string, pass: string) => {
     setState((prev) => ({ ...prev, error: null }));
@@ -92,7 +89,6 @@ export function useAuth() {
   return {
     ...state,
     signInWithGooglePopup,
-    signInWithGoogleRedirect,
     signInEmail,
     signUpEmail,
     signInGuest,

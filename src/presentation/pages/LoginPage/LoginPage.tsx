@@ -45,7 +45,6 @@ function getAuthErrorMessage(err: any): string {
 export function LoginPage() {
   const {
     signInWithGooglePopup,
-    signInWithGoogleRedirect,
     signInEmail,
     signUpEmail,
     signInGuest,
@@ -63,30 +62,16 @@ export function LoginPage() {
   const activeError = errorMessage || (globalError ? getAuthErrorMessage({ code: globalError, message: globalError }) : null);
 
 
-  const handleGoogle = async () => {
+  const handleGooglePopup = () => {
     setErrorMessage(null);
     setLoading(true);
-    try {
-      await signInWithGooglePopup();
-    } catch (err: any) {
-      console.error('Google Sign-In Error:', err);
-      if (err?.code === 'auth/popup-blocked') {
-        try {
-          await signInWithGoogleRedirect();
-        } catch (redirectErr: any) {
-          console.error('Google Redirect Error:', redirectErr);
-          setErrorMessage(getAuthErrorMessage(redirectErr));
-          setLoading(false);
-        }
-      } else if (err?.code !== 'auth/popup-closed-by-user') {
+    signInWithGooglePopup()
+      .catch((err: any) => {
+        console.error('Google Popup Error:', err);
         setErrorMessage(getAuthErrorMessage(err));
         setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    }
+      });
   };
-
 
 
   const handleEmailSubmit = async (e: FormEvent) => {
@@ -151,7 +136,7 @@ export function LoginPage() {
           <div>
             <button
               className={styles.googleBtn}
-              onClick={handleGoogle}
+              onClick={handleGooglePopup}
               disabled={loading}
               type="button"
             >
@@ -165,7 +150,6 @@ export function LoginPage() {
             </button>
           </div>
         )}
-
 
         {activeTab === 'email' && (
           <form className={styles.form} onSubmit={handleEmailSubmit}>
