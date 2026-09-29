@@ -97,7 +97,7 @@ export function BusinessRegistrationPage({
       </div>
 
       <div className={styles.heroBanner}>
-        <span className={styles.heroIcon}>🏪</span>
+        <svg className={styles.heroIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l1-6h16l1 6"/><path d="M3 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0"/><path d="M5 9v11h14V9"/><path d="M9 21v-6h6v6"/></svg>
         <p className={styles.heroText}>Crea tu perfil de negocio y llega a miles de clientes en Casanare</p>
       </div>
 
@@ -112,7 +112,10 @@ export function BusinessRegistrationPage({
           >
             {logoPreview
               ? <img src={logoPreview} alt="Logo" className={styles.logoPreview} />
-              : <span className={styles.logoPlaceholder}>📷<br />Agregar logo</span>
+              : <span className={styles.logoPlaceholder}>
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#B84A32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <br />Agregar logo
+                </span>
             }
           </button>
           <input

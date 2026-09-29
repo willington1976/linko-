@@ -47,7 +47,7 @@
   border-radius: 12px;
 }
 
-.heroIcon { font-size: 2rem; flex-shrink: 0; }
+.heroIcon { width: 36px; height: 36px; flex-shrink: 0; color: #fff; }
 
 .heroText {
   font-size: 0.875rem;
