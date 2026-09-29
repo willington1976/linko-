@@ -3,10 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  signInWithRedirect,
-  getRedirectResult,
   signOut,
-  GoogleAuthProvider,
   type User,
 } from 'firebase/auth';
 import { auth } from '../../infrastructure/firebase/firebaseConfig';
@@ -21,27 +18,14 @@ export function useAuth() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      console.log('onAuthStateChanged:', user?.email ?? 'null');
       setState({ user, loading: false });
     });
-
-    getRedirectResult(auth)
-      .then((result) => {
-        console.log('getRedirectResult:', result?.user?.email ?? 'null');
-      })
-      .catch((err) => console.error('getRedirectResult error:', err));
-
     return () => unsub();
   }, []);
-
-  const signInWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithRedirect(auth, provider);
-  };
 
   const logout = async () => {
     await signOut(auth);
   };
 
-  return { ...state, signInWithGoogle, logout };
+  return { ...state, logout };
 }
