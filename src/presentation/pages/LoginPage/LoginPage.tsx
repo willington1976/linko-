@@ -45,6 +45,7 @@ function getAuthErrorMessage(err: any): string {
 export function LoginPage() {
   const {
     signInWithGooglePopup,
+    signInWithGoogleRedirect,
     signInEmail,
     signUpEmail,
     signInGuest,
@@ -62,14 +63,28 @@ export function LoginPage() {
   const activeError = errorMessage || (globalError ? getAuthErrorMessage({ code: globalError, message: globalError }) : null);
 
 
-  const handleGoogle = () => {
+  const handleGoogle = async () => {
     setErrorMessage(null);
-    signInWithGooglePopup().catch((err: any) => {
+    setLoading(true);
+    try {
+      await signInWithGooglePopup();
+    } catch (err: any) {
       console.error('Google Sign-In Error:', err);
-      if (err?.code !== 'auth/popup-closed-by-user') {
+      if (err?.code === 'auth/popup-blocked') {
+        try {
+          await signInWithGoogleRedirect();
+        } catch (redirectErr: any) {
+          console.error('Google Redirect Error:', redirectErr);
+          setErrorMessage(getAuthErrorMessage(redirectErr));
+          setLoading(false);
+        }
+      } else if (err?.code !== 'auth/popup-closed-by-user') {
         setErrorMessage(getAuthErrorMessage(err));
+        setLoading(false);
+      } else {
+        setLoading(false);
       }
-    });
+    }
   };
 
 
