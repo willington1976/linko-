@@ -20,10 +20,16 @@ export function useAuth() {
   const [state, setState] = useState<AuthState>({ user: null, loading: true });
 
   useEffect(() => {
-    // Captura el resultado del redirect al volver de Google
-    getRedirectResult(auth).catch(() => {
-      // Si no hay redirect pendiente, ignora silenciosamente
-    });
+    // Procesa el resultado del redirect antes de escuchar auth state
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          setState({ user: result.user, loading: false });
+        }
+      })
+      .catch((err) => {
+        console.error('Redirect result error:', err);
+      });
 
     const unsub = onAuthStateChanged(auth, (user) => {
       setState({ user, loading: false });
