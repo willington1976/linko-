@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
   signInWithPopup,
-  signInWithRedirect,
   getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -68,15 +67,6 @@ export function useAuth() {
     return result;
   };
 
-  const signInWithGoogleRedirect = async () => {
-    setState((prev) => ({ ...prev, error: null }));
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    await signInWithRedirect(auth, provider);
-  };
-
-
-
 
   const signInEmail = async (email: string, pass: string) => {
     setState((prev) => ({ ...prev, error: null }));
@@ -100,7 +90,6 @@ export function useAuth() {
   return {
     ...state,
     signInWithGooglePopup,
-    signInWithGoogleRedirect,
     signInEmail,
     signUpEmail,
     signInGuest,
