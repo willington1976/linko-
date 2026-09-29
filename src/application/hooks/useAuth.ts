@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInAnonymously,
@@ -27,25 +29,32 @@ export function useAuth() {
       setState({ user, loading: false, error: null });
     });
 
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          setState({ user: result.user, loading: false, error: null });
+        }
+      })
+      .catch((err) => {
+        console.warn('getRedirectResult warning:', err);
+      });
+
     return () => unsub();
   }, []);
 
-
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = () => {
     setState((prev) => ({ ...prev, error: null }));
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    try {
-      const result = await signInWithPopup(auth, provider);
-      if (result?.user) {
-        setState({ user: result.user, loading: false, error: null });
+    return signInWithPopup(auth, provider).catch((err: any) => {
+      if (err.code === 'auth/popup-blocked') {
+        console.warn('Popup blocked, falling back to signInWithRedirect');
+        return signInWithRedirect(auth, provider);
       }
-      return result;
-    } catch (err: any) {
-      console.error('signInWithPopup error:', err);
       throw err;
-    }
+    });
   };
+
 
 
   const signInEmail = async (email: string, pass: string) => {

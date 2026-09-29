@@ -53,18 +53,17 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleGoogle = async () => {
-    setLoading(true);
+  const handleGoogle = () => {
     setErrorMessage(null);
-    try {
-      await signInWithGoogle();
-    } catch (err: any) {
-      console.error('Google Sign-In Error:', err);
-      setErrorMessage(getAuthErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    signInWithGoogle()
+      .catch((err: any) => {
+        console.error('Google Sign-In Error:', err);
+        setErrorMessage(getAuthErrorMessage(err));
+        setLoading(false);
+      });
   };
+
 
   const handleEmailSubmit = async (e: FormEvent) => {
     e.preventDefault();
