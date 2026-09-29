@@ -21,10 +21,15 @@ export function useAuth() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
+      console.log('onAuthStateChanged:', user?.email ?? 'null');
       setState({ user, loading: false });
     });
 
-    getRedirectResult(auth).catch(console.error);
+    getRedirectResult(auth)
+      .then((result) => {
+        console.log('getRedirectResult:', result?.user?.email ?? 'null');
+      })
+      .catch((err) => console.error('getRedirectResult error:', err));
 
     return () => unsub();
   }, []);
