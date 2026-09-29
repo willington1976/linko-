@@ -42,18 +42,24 @@ export function useAuth() {
     return () => unsub();
   }, []);
 
-  const signInWithGoogle = () => {
+  const signInWithGooglePopup = async () => {
     setState((prev) => ({ ...prev, error: null }));
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    return signInWithPopup(auth, provider).catch((err: any) => {
-      if (err.code === 'auth/popup-blocked') {
-        console.warn('Popup blocked, falling back to signInWithRedirect');
-        return signInWithRedirect(auth, provider);
-      }
-      throw err;
-    });
+    const result = await signInWithPopup(auth, provider);
+    if (result?.user) {
+      setState({ user: result.user, loading: false, error: null });
+    }
+    return result;
   };
+
+  const signInWithGoogleRedirect = async () => {
+    setState((prev) => ({ ...prev, error: null }));
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await signInWithRedirect(auth, provider);
+  };
+
 
 
 
@@ -78,7 +84,8 @@ export function useAuth() {
 
   return {
     ...state,
-    signInWithGoogle,
+    signInWithGooglePopup,
+    signInWithGoogleRedirect,
     signInEmail,
     signUpEmail,
     signInGuest,

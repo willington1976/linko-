@@ -43,7 +43,13 @@ function getAuthErrorMessage(err: any): string {
 }
 
 export function LoginPage() {
-  const { signInWithGoogle, signInEmail, signUpEmail, signInGuest } = useAuth();
+  const {
+    signInWithGooglePopup,
+    signInWithGoogleRedirect,
+    signInEmail,
+    signUpEmail,
+    signInGuest,
+  } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'google' | 'email'>('google');
   const [isRegistering, setIsRegistering] = useState(false);
@@ -53,16 +59,28 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleGoogle = () => {
+  const handleGooglePopup = () => {
     setErrorMessage(null);
     setLoading(true);
-    signInWithGoogle()
+    signInWithGooglePopup()
       .catch((err: any) => {
-        console.error('Google Sign-In Error:', err);
+        console.error('Google Popup Error:', err);
         setErrorMessage(getAuthErrorMessage(err));
         setLoading(false);
       });
   };
+
+  const handleGoogleRedirect = () => {
+    setErrorMessage(null);
+    setLoading(true);
+    signInWithGoogleRedirect()
+      .catch((err: any) => {
+        console.error('Google Redirect Error:', err);
+        setErrorMessage(getAuthErrorMessage(err));
+        setLoading(false);
+      });
+  };
+
 
 
   const handleEmailSubmit = async (e: FormEvent) => {
@@ -127,7 +145,7 @@ export function LoginPage() {
           <div>
             <button
               className={styles.googleBtn}
-              onClick={handleGoogle}
+              onClick={handleGooglePopup}
               disabled={loading}
               type="button"
             >
@@ -139,8 +157,18 @@ export function LoginPage() {
               </svg>
               {loading ? 'Iniciando sesión...' : 'Continuar con Google'}
             </button>
+            <button
+              type="button"
+              className={styles.toggleMode}
+              onClick={handleGoogleRedirect}
+              disabled={loading}
+              style={{ marginTop: '0.875rem' }}
+            >
+              🌐 ¿No abre la ventana? Usar inicio por redirección
+            </button>
           </div>
         )}
+
 
         {activeTab === 'email' && (
           <form className={styles.form} onSubmit={handleEmailSubmit}>
