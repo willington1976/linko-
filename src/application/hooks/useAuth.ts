@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  signInWithRedirect,
+  signInWithPopup,
   getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -56,12 +56,10 @@ export function useAuth() {
   }, []);
 
 
-  const signInWithGoogle = () => {
-    // Use redirect flow — more reliable than popup in Chrome/PWA/Vercel production.
-    // getRedirectResult() in useEffect handles session completion on return.
+  const signInWithGooglePopup = () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    return signInWithRedirect(auth, provider);
+    return signInWithPopup(auth, provider);
   };
 
 
@@ -86,7 +84,7 @@ export function useAuth() {
 
   return {
     ...state,
-    signInWithGoogle,
+    signInWithGooglePopup,
     signInEmail,
     signUpEmail,
     signInGuest,
