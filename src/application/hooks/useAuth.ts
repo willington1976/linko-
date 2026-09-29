@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   GoogleAuthProvider,
   type User,
@@ -22,13 +23,15 @@ export function useAuth() {
     const unsub = onAuthStateChanged(auth, (user) => {
       setState({ user, loading: false });
     });
+
+    getRedirectResult(auth).catch(console.error);
+
     return () => unsub();
   }, []);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    await signInWithPopup(auth, provider);
+    signInWithRedirect(auth, provider);
   };
 
   const logout = async () => {
