@@ -1,20 +1,13 @@
 ﻿// src/presentation/pages/LoginPage/LoginPage.tsx
 
-import { useState } from 'react';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../../infrastructure/firebase/firebaseConfig';
 import styles from './LoginPage.module.css';
 
 export function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
-
   const handleGoogle = () => {
-    setError(null);
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    signInWithPopup(auth, provider).catch(() => {
-      setError('No se pudo iniciar sesión. Intenta de nuevo.');
-    });
+    signInWithRedirect(auth, provider);
   };
 
   return (
@@ -32,8 +25,6 @@ export function LoginPage() {
           </svg>
           Continuar con Google
         </button>
-
-        {error && <p className={styles.error}>{error}</p>}
       </div>
     </main>
   );
