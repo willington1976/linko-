@@ -63,15 +63,18 @@ export function LoginPage() {
 
 
   const handleGooglePopup = () => {
+    // Start the popup FIRST — before any setState — so Chrome's user-activation
+    // context is intact when signInWithPopup opens the window.
+    const promise = signInWithGooglePopup();
     setErrorMessage(null);
     setLoading(true);
-    signInWithGooglePopup()
-      .catch((err: any) => {
-        console.error('Google Popup Error:', err);
-        setErrorMessage(getAuthErrorMessage(err));
-        setLoading(false);
-      });
+    promise.catch((err: any) => {
+      console.error('Google Popup Error:', err);
+      setErrorMessage(getAuthErrorMessage(err));
+      setLoading(false);
+    });
   };
+
 
 
 

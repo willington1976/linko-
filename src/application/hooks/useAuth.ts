@@ -57,7 +57,9 @@ export function useAuth() {
 
 
   const signInWithGooglePopup = async () => {
-    setState((prev) => ({ ...prev, error: null }));
+    // Do NOT call setState before signInWithPopup — any state update before
+    // the popup causes a React re-render that breaks Chrome's user-activation
+    // context, resulting in auth/popup-blocked.
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     const result = await signInWithPopup(auth, provider);
