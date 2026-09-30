@@ -96,6 +96,7 @@ export function App() {
             authorId={user.uid}
             onSuccess={(id) => { goDetail(id); }}
             onBack={goHome}
+            onGoToMembership={goMembership}
           />
         )}
 
