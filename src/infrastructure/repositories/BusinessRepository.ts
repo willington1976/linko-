@@ -17,16 +17,16 @@ import type { Business } from '../../domain/entities/Business';
 
 const COL = 'businesses';
 
-// ─── Negocios con membresía activa (vitrina) ──────────────────────────────────
+// Negocios con membresia activa (vitrina)
 
 export async function fetchActiveBusinesses(pageSize = 20): Promise<Business[]> {
   const now = new Date();
   const snap = await getDocs(
     query(
       collection(db, COL),
-      where('membershipActive', '==', true),
-      where('membershipUntil', '>', now),
-      orderBy('membershipUntil', 'desc'),
+      where('membership.status', '==', 'active'),
+      where('membership.expiresAt', '>', now),
+      orderBy('membership.expiresAt', 'desc'),
       limit(pageSize),
     ),
   );
@@ -34,7 +34,7 @@ export async function fetchActiveBusinesses(pageSize = 20): Promise<Business[]> 
   const results: Business[] = [];
   for (const d of snap.docs) {
     try {
-      results.push(mapDTOToBusiness({ id: d.id, ...d.data() } as BusinessDTO));
+      results.push(mapDTOToBusiness({ businessId: d.id, ...d.data() } as BusinessDTO));
     } catch (err) {
       if (err instanceof DTOValidationError) console.warn((err as DTOValidationError).message);
       else throw err;
@@ -43,13 +43,13 @@ export async function fetchActiveBusinesses(pageSize = 20): Promise<Business[]> 
   return results;
 }
 
-// ─── Detalle de un negocio ────────────────────────────────────────────────────
+// Detalle de un negocio
 
 export async function fetchBusinessById(id: string): Promise<Business | null> {
   const snap = await getDoc(doc(db, COL, id));
   if (!snap.exists()) return null;
   try {
-    return mapDTOToBusiness({ id: snap.id, ...snap.data() } as BusinessDTO);
+    return mapDTOToBusiness({ businessId: snap.id, ...snap.data() } as BusinessDTO);
   } catch (err) {
     if (err instanceof DTOValidationError) {
       console.warn((err as DTOValidationError).message);
@@ -59,7 +59,7 @@ export async function fetchBusinessById(id: string): Promise<Business | null> {
   }
 }
 
-// ─── Negocio del usuario autenticado ─────────────────────────────────────────
+// Negocio del usuario autenticado
 
 export async function fetchBusinessByOwner(
   ownerId: string,
@@ -74,7 +74,7 @@ export async function fetchBusinessByOwner(
   if (snap.empty) return null;
   const d = snap.docs[0]!;
   try {
-    return mapDTOToBusiness({ id: d.id, ...d.data() } as BusinessDTO);
+    return mapDTOToBusiness({ businessId: d.id, ...d.data() } as BusinessDTO);
   } catch (err) {
     if (err instanceof DTOValidationError) {
       console.warn((err as DTOValidationError).message);
