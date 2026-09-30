@@ -48,17 +48,17 @@ export function ProfilePage({
 
       <div className={styles.actions}>
         <button className={styles.actionBtn} type="button">Mis publicaciones</button>
-        <button className={styles.actionBtn} type="button">Configuración</button>
+        <button className={styles.actionBtn} type="button">Configuracion</button>
 
         {!loadingBusiness && (
           <button className={styles.bizBtn} onClick={handleBusinessBtn} type="button">
-            🏪 {business ? 'Mi negocio' : 'Registrar mi negocio'}
+            {business ? 'Mi negocio' : 'Registrar mi negocio'}
           </button>
         )}
 
         {onSignOut && (
           <button className={styles.signOut} onClick={onSignOut} type="button">
-            Cerrar sesión
+            Cerrar sesion
           </button>
         )}
       </div>
