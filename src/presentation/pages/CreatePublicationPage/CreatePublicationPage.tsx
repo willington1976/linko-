@@ -12,16 +12,17 @@ interface CreatePublicationPageProps {
   authorId: string;
   onSuccess: (publicationId: string) => void;
   onBack: () => void;
+  onGoToMembership?: () => void;
 }
 
-const MAX_PHOTOS_PERSONAL  = 1;
-const MAX_PHOTOS_BUSINESS  = 5;
+const MAX_PHOTOS_PERSONAL = 1;
+const MAX_PHOTOS_BUSINESS = 5;
 
-export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePublicationPageProps) {
+export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembership }: CreatePublicationPageProps) {
   const { loading, uploadProgress, error, submit, reset } = useCreatePublication(authorId);
-  const { hasMembership } = useBusiness(authorId);
+  const { business, hasMembership } = useBusiness(authorId);
 
-  const maxPhotos      = hasMembership ? MAX_PHOTOS_BUSINESS : MAX_PHOTOS_PERSONAL;
+  const maxPhotos       = hasMembership ? MAX_PHOTOS_BUSINESS : MAX_PHOTOS_PERSONAL;
   const publicationType = hasMembership ? 'business' : 'personal';
 
   const [title, setTitle]               = useState('');
@@ -73,9 +74,35 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
         <h1 className={styles.pageTitle}>Nueva publicacion</h1>
       </div>
 
+      {/* Banner membresía activa */}
       {hasMembership && (
         <div className={styles.businessBanner}>
-          <span>⭐ Publicacion de negocio · hasta {String(MAX_PHOTOS_BUSINESS)} fotos</span>
+          ⭐ Publicacion de negocio · hasta {String(MAX_PHOTOS_BUSINESS)} fotos
+        </div>
+      )}
+
+      {/* Banner persuasivo para usuarios sin membresía que tienen negocio registrado */}
+      {!hasMembership && business && (
+        <div className={styles.upsellBanner}>
+          <div className={styles.upsellText}>
+            <span className={styles.upsellIcon}>📸</span>
+            <div>
+              <strong>¿Quieres destacar mas?</strong>
+              <p>Con membresia Linko sube hasta 5 fotos, aparece en "Negocios cerca" y llega a mas clientes.</p>
+            </div>
+          </div>
+          {onGoToMembership && (
+            <button className={styles.upsellBtn} type="button" onClick={onGoToMembership}>
+              Ver planes
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Banner persuasivo para usuarios sin negocio registrado */}
+      {!hasMembership && !business && (
+        <div className={styles.upsellBannerSoft}>
+          <span>💡 Registra tu negocio y obtén membresía para publicar hasta 5 fotos y destacar en el feed.</span>
         </div>
       )}
 
@@ -158,12 +185,7 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
         <div className={styles.field}>
           <label className={styles.label} htmlFor="municipality">Municipio *</label>
           <div className={styles.locationRow}>
-            <input
-              className={styles.inputDisabled}
-              value="Casanare"
-              disabled
-              readOnly
-            />
+            <input className={styles.inputDisabled} value="Casanare" disabled readOnly />
             <select
               id="municipality"
               className={styles.select}
@@ -196,15 +218,17 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
               ? `Fotos (max. ${String(MAX_PHOTOS_BUSINESS)})`
               : `Foto (max. ${String(MAX_PHOTOS_PERSONAL)})`}
           </label>
+
           <button
             type="button"
-            className={styles.photoBtn}
+            className={`${styles.photoBtn} ${photoFiles.length > 0 ? styles.photoBtnActive : ''}`}
             onClick={() => fileRef.current?.click()}
           >
-            {photoFiles.length > 0
+            📷 {photoFiles.length > 0
               ? `${String(photoFiles.length)} foto${photoFiles.length > 1 ? 's' : ''} seleccionada${photoFiles.length > 1 ? 's' : ''}`
               : 'Agregar foto'}
           </button>
+
           <input
             ref={fileRef}
             type="file"
@@ -213,12 +237,25 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
             className={styles.hidden}
             onChange={handlePhotoChange}
           />
+
           {photoFiles.length > 0 && (
             <div className={styles.photoPreviewRow}>
               {photoFiles.map((f, i) => (
                 <span key={i} className={styles.photoName}>{f.name}</span>
               ))}
             </div>
+          )}
+
+          {/* Upsell inline en el campo de foto */}
+          {!hasMembership && (
+            <p className={styles.photoUpsell}>
+              🌟 Con membresía puedes subir hasta 5 fotos.{' '}
+              {onGoToMembership && (
+                <button type="button" className={styles.photoUpsellLink} onClick={onGoToMembership}>
+                  Activar ahora
+                </button>
+              )}
+            </p>
           )}
         </div>
 

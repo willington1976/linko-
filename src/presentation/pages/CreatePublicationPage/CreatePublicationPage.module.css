@@ -4,7 +4,6 @@
   padding-bottom: var(--space-8, 2rem);
 }
 
-/* ── Header ── */
 .header {
   display: flex;
   align-items: center;
@@ -41,7 +40,7 @@
   margin: 0;
 }
 
-/* ── Business banner ── */
+/* ── Banners ── */
 .businessBanner {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: #fff;
@@ -49,6 +48,67 @@
   padding: 0.5rem 1rem;
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+.upsellBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-bottom: 1px solid #bfdbfe;
+  padding: 0.75rem 1rem;
+}
+
+.upsellText {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.upsellIcon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.upsellText strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #1e40af;
+  margin-bottom: 2px;
+}
+
+.upsellText p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #1d4ed8;
+  line-height: 1.4;
+}
+
+.upsellBtn {
+  flex-shrink: 0;
+  padding: 0.45rem 0.9rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.upsellBtn:hover { background: #1d4ed8; }
+
+.upsellBannerSoft {
+  background: #f0fdf4;
+  border-bottom: 1px solid #bbf7d0;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  color: #166534;
+  text-align: center;
 }
 
 /* ── Form ── */
@@ -61,7 +121,6 @@
   gap: var(--space-4, 1rem);
 }
 
-/* ── Field ── */
 .field {
   display: flex;
   flex-direction: column;
@@ -74,7 +133,6 @@
   color: var(--color-text, #111827);
 }
 
-/* ── Inputs ── */
 .input,
 .select,
 .textarea {
@@ -92,18 +150,11 @@
 }
 .input:focus,
 .select:focus,
-.textarea:focus {
-  border-color: var(--color-primary, #2980b9);
-}
+.textarea:focus { border-color: var(--color-primary, #2980b9); }
 
-.textarea {
-  resize: vertical;
-  min-height: 100px;
-}
+.textarea { resize: vertical; min-height: 100px; }
 
-.inputError {
-  border-color: #ef4444 !important;
-}
+.inputError { border-color: #ef4444 !important; }
 
 .inputDisabled {
   width: 100%;
@@ -117,25 +168,19 @@
   box-sizing: border-box;
 }
 
-/* ── Location row ── */
 .locationRow {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: var(--space-2, 0.5rem);
 }
 
-/* ── Char count ── */
 .charCount {
   font-size: 0.75rem;
   color: var(--color-text-secondary, #6b7280);
   text-align: right;
 }
 
-/* ── Error messages ── */
-.errorMsg {
-  font-size: 0.78rem;
-  color: #ef4444;
-}
+.errorMsg { font-size: 0.78rem; color: #ef4444; }
 
 .globalError {
   font-size: 0.88rem;
@@ -146,11 +191,7 @@
   margin: 0;
 }
 
-/* ── Intent buttons ── */
-.intentGroup {
-  display: flex;
-  gap: 0.5rem;
-}
+.intentGroup { display: flex; gap: 0.5rem; }
 
 .intentBtn {
   flex: 1;
@@ -163,18 +204,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
+  font-family: inherit;
 }
-.intentBtn:hover {
-  border-color: var(--color-primary, #2980b9);
-  color: var(--color-primary, #2980b9);
-}
-.intentActive {
-  background: var(--color-primary, #2980b9);
-  border-color: var(--color-primary, #2980b9);
-  color: #fff;
-}
+.intentBtn:hover { border-color: var(--color-primary, #2980b9); color: var(--color-primary, #2980b9); }
+.intentActive { background: var(--color-primary, #2980b9); border-color: var(--color-primary, #2980b9); color: #fff; }
 
-/* ── Photo button ── */
+/* ── Photo ── */
 .photoBtn {
   display: inline-flex;
   align-items: center;
@@ -192,21 +227,11 @@
   box-sizing: border-box;
   font-family: inherit;
 }
-.photoBtn:hover {
-  border-color: var(--color-primary, #2980b9);
-  color: var(--color-primary, #2980b9);
-}
-.photoBtnActive {
-  border-color: var(--color-primary, #2980b9);
-  color: var(--color-primary, #2980b9);
-  background: #eff6ff;
-}
+.photoBtn:hover { border-color: var(--color-primary, #2980b9); color: var(--color-primary, #2980b9); }
+.photoBtnActive { border-color: var(--color-primary, #2980b9); color: var(--color-primary, #2980b9); background: #eff6ff; }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
-/* ── Photo preview ── */
 .photoPreviewRow {
   display: flex;
   flex-wrap: wrap;
@@ -226,7 +251,25 @@
   white-space: nowrap;
 }
 
-/* ── Progress bar ── */
+.photoUpsell {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0;
+}
+
+.photoUpsellLink {
+  background: none;
+  border: none;
+  color: var(--color-primary, #2980b9);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  text-decoration: underline;
+}
+
+/* ── Progress ── */
 .progressWrapper {
   position: relative;
   height: 0.5rem;
@@ -248,7 +291,7 @@
   color: var(--color-text-secondary, #6b7280);
 }
 
-/* ── Submit button ── */
+/* ── Submit ── */
 .submitBtn {
   width: 100%;
   padding: 0.85rem;
@@ -263,10 +306,5 @@
   margin-top: 0.5rem;
   font-family: inherit;
 }
-.submitBtn:hover:not(:disabled) {
-  background: #2471a3;
-}
-.submitBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.submitBtn:hover:not(:disabled) { background: #2471a3; }
+.submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
