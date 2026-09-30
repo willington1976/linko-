@@ -66,7 +66,6 @@ export function useCreatePublication(authorId: string) {
           photoUrls.push(url);
         }
 
-        // Construir location y municipality para la Cloud Function
         const location = `${input.department}, ${input.municipality}`;
 
         const fn = httpsCallable<CreatePublicationInput, CreatePublicationResult>(
@@ -79,7 +78,10 @@ export function useCreatePublication(authorId: string) {
           location,
           municipality: input.municipality,
           photos: photoUrls,
+          // Si es publicacion de negocio, businessId = authorId (doc en businesses/{authorId})
+          ...(input.publicationType === 'business' && { businessId: authorId }),
         });
+
         const result: CreatePublicationResult = {
           ...response.data,
           expiresAt: new Date(response.data.expiresAt),
