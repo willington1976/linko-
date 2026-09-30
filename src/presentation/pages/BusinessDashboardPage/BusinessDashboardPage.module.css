@@ -1,0 +1,314 @@
+/* src/presentation/pages/BusinessDashboardPage/BusinessDashboardPage.module.css */
+
+.page {
+  min-height: 100dvh;
+  background: var(--color-bg, #f8fafc);
+  padding: 0 0 3rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-surface, #ffffff);
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--color-text, #1e293b);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  line-height: 1;
+}
+
+.backBtn:hover { background: #f1f5f9; }
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text, #1e293b);
+  margin: 0;
+}
+
+/* Loading */
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60dvh;
+  gap: 1rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e2e8f0;
+  border-top-color: var(--color-primary, #2563eb);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  gap: 1rem;
+}
+
+.emptyIcon { font-size: 3.5rem; }
+
+.emptyTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text, #1e293b);
+  margin: 0;
+}
+
+.emptyText {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.primaryBtn {
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--color-primary, #2563eb);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+
+.primaryBtn:hover { background: #1d4ed8; }
+
+/* Profile card */
+.profileCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.25rem;
+  padding: 1.25rem;
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.profileAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarLetter {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.profileInfo { flex: 1; min-width: 0; }
+
+.businessName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text, #1e293b);
+  margin: 0 0 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.businessMeta {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Membership card */
+.membershipCard {
+  margin: 0 1.25rem 1rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.membership_active   { border-color: #86efac; background: #f0fdf4; }
+.membership_expired  { border-color: #fca5a5; background: #fef2f2; }
+.membership_inactive { border-color: #e2e8f0; background: #f8fafc; }
+
+.membershipTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.membershipLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.2rem;
+}
+
+.membershipStatus {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text, #1e293b);
+  margin: 0;
+}
+
+.membershipBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 2rem;
+}
+
+.badge_active   { background: #dcfce7; color: #16a34a; }
+.badge_expired  { background: #fee2e2; color: #dc2626; }
+.badge_inactive { background: #f1f5f9; color: #64748b; }
+
+.membershipExpiry {
+  font-size: 0.8rem;
+  color: #16a34a;
+  margin: 0 0 0.75rem;
+}
+
+.benefitsList { margin-top: 0.75rem; }
+
+.benefitsTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 0.4rem;
+}
+
+.benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.benefits li {
+  font-size: 0.825rem;
+  color: #166534;
+}
+
+.activateBtn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--color-primary, #2563eb);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.activateBtn:hover { background: #1d4ed8; }
+
+/* Actions */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0 1.25rem;
+}
+
+.actionCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.875rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.actionCard:hover:not(.actionDisabled) { background: #f8fafc; }
+
+.actionDisabled { opacity: 0.5; cursor: default; }
+
+.actionIcon { font-size: 1.5rem; flex-shrink: 0; }
+
+.actionText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.actionTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text, #1e293b);
+}
+
+.actionSub {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.actionArrow {
+  font-size: 1.4rem;
+  color: #94a3b8;
+}
+
+/* Plan info */
+.planInfo {
+  margin: 1.25rem;
+  text-align: center;
+}
+
+.planInfoText {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0;
+}
