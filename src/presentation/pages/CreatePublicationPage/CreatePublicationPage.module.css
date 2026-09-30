@@ -40,7 +40,6 @@
   margin: 0;
 }
 
-/* ── Banners ── */
 .businessBanner {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: #fff;
@@ -67,10 +66,7 @@
   flex: 1;
 }
 
-.upsellIcon {
-  font-size: 1.4rem;
-  flex-shrink: 0;
-}
+.upsellIcon { font-size: 1.4rem; flex-shrink: 0; }
 
 .upsellText strong {
   display: block;
@@ -111,7 +107,6 @@
   text-align: center;
 }
 
-/* ── Form ── */
 .form {
   max-width: 560px;
   margin: 0 auto;
@@ -153,7 +148,6 @@
 .textarea:focus { border-color: var(--color-primary, #2980b9); }
 
 .textarea { resize: vertical; min-height: 100px; }
-
 .inputError { border-color: #ef4444 !important; }
 
 .inputDisabled {
@@ -209,7 +203,6 @@
 .intentBtn:hover { border-color: var(--color-primary, #2980b9); color: var(--color-primary, #2980b9); }
 .intentActive { background: var(--color-primary, #2980b9); border-color: var(--color-primary, #2980b9); color: #fff; }
 
-/* ── Photo ── */
 .photoBtn {
   display: inline-flex;
   align-items: center;
@@ -269,7 +262,6 @@
   text-decoration: underline;
 }
 
-/* ── Progress ── */
 .progressWrapper {
   position: relative;
   height: 0.5rem;
@@ -291,7 +283,53 @@
   color: var(--color-text-secondary, #6b7280);
 }
 
-/* ── Submit ── */
+/* ── Error membresía accionable ── */
+.membershipError {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1.5px solid #f59e0b;
+  border-radius: var(--radius-md, 0.6rem);
+  padding: 0.85rem 1rem;
+}
+
+.membershipErrorText {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 1.2rem;
+}
+
+.membershipErrorText div strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #92400e;
+  margin-bottom: 2px;
+}
+
+.membershipErrorText div p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #b45309;
+  line-height: 1.4;
+}
+
+.membershipErrorBtn {
+  width: 100%;
+  padding: 0.65rem;
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md, 0.6rem);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.membershipErrorBtn:hover { background: #d97706; }
+
 .submitBtn {
   width: 100%;
   padding: 0.85rem;

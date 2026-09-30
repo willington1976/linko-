@@ -65,6 +65,12 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembe
 
   const fe = (field: string) => getFieldError(fieldErrors, field);
 
+  const isMembershipError = !!error && (
+    error.toLowerCase().includes('members') ||
+    error.toLowerCase().includes('membresia') ||
+    error.toLowerCase().includes('membresía')
+  );
+
   return (
     <main className={styles.page}>
       <div className={styles.header}>
@@ -74,14 +80,12 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembe
         <h1 className={styles.pageTitle}>Nueva publicacion</h1>
       </div>
 
-      {/* Banner membresía activa */}
       {hasMembership && (
         <div className={styles.businessBanner}>
           ⭐ Publicacion de negocio · hasta {String(MAX_PHOTOS_BUSINESS)} fotos
         </div>
       )}
 
-      {/* Banner persuasivo para usuarios sin membresía que tienen negocio registrado */}
       {!hasMembership && business && (
         <div className={styles.upsellBanner}>
           <div className={styles.upsellText}>
@@ -99,7 +103,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembe
         </div>
       )}
 
-      {/* Banner persuasivo para usuarios sin negocio registrado */}
       {!hasMembership && !business && (
         <div className={styles.upsellBannerSoft}>
           <span>💡 Registra tu negocio y obtén membresía para publicar hasta 5 fotos y destacar en el feed.</span>
@@ -218,7 +221,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembe
               ? `Fotos (max. ${String(MAX_PHOTOS_BUSINESS)})`
               : `Foto (max. ${String(MAX_PHOTOS_PERSONAL)})`}
           </label>
-
           <button
             type="button"
             className={`${styles.photoBtn} ${photoFiles.length > 0 ? styles.photoBtnActive : ''}`}
@@ -228,7 +230,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembe
               ? `${String(photoFiles.length)} foto${photoFiles.length > 1 ? 's' : ''} seleccionada${photoFiles.length > 1 ? 's' : ''}`
               : 'Agregar foto'}
           </button>
-
           <input
             ref={fileRef}
             type="file"
@@ -237,7 +238,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembe
             className={styles.hidden}
             onChange={handlePhotoChange}
           />
-
           {photoFiles.length > 0 && (
             <div className={styles.photoPreviewRow}>
               {photoFiles.map((f, i) => (
@@ -245,8 +245,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembe
               ))}
             </div>
           )}
-
-          {/* Upsell inline en el campo de foto */}
           {!hasMembership && (
             <p className={styles.photoUpsell}>
               🌟 Con membresía puedes subir hasta 5 fotos.{' '}
@@ -266,7 +264,28 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack, onGoToMembe
           </div>
         )}
 
-        {error && <p className={styles.globalError}>{error}</p>}
+        {isMembershipError ? (
+          <div className={styles.membershipError}>
+            <div className={styles.membershipErrorText}>
+              <span>⭐</span>
+              <div>
+                <strong>Tu negocio no tiene membresía activa</strong>
+                <p>Activa tu membresía para publicar con fotos y aparecer en "Negocios cerca".</p>
+              </div>
+            </div>
+            {onGoToMembership && (
+              <button
+                type="button"
+                className={styles.membershipErrorBtn}
+                onClick={onGoToMembership}
+              >
+                Activar membresía →
+              </button>
+            )}
+          </div>
+        ) : (
+          error && <p className={styles.globalError}>{error}</p>
+        )}
 
         <button type="submit" className={styles.submitBtn} disabled={loading}>
           {loading ? 'Publicando...' : 'Publicar'}
