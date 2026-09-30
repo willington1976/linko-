@@ -1,0 +1,153 @@
+// src/presentation/pages/BusinessRegisterPage/BusinessRegisterPage.tsx
+
+import { useState, type FormEvent } from 'react';
+import { createBusiness } from '../../../infrastructure/firebase/businessService';
+import { BUSINESS_CATEGORIES, type BusinessCategory } from '../../../domain/entities/Business';
+import { CASANARE_MUNICIPALITIES } from '../../../domain/entities/Publication';
+import type { CasanareMunicipality } from '../../../domain/entities/Publication';
+import styles from './BusinessRegistrationPage.module.css';
+interface BusinessRegisterPageProps {
+  userId: string;
+  onSuccess: () => void;
+  onBack: () => void;
+}
+
+export function BusinessRegisterPage({ userId, onSuccess, onBack }: BusinessRegisterPageProps) {
+  const [businessName, setBusinessName] = useState('');
+  const [category, setCategory]         = useState<BusinessCategory>('comercio');
+  const [contactPhone, setContactPhone] = useState('');
+  const [description, setDescription]  = useState('');
+  const [municipality, setMunicipality] = useState<CasanareMunicipality>('Yopal');
+  const [loading, setLoading]           = useState(false);
+  const [error, setError]               = useState<string | null>(null);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!businessName.trim()) { setError('El nombre del negocio es obligatorio.'); return; }
+    if (!contactPhone.trim()) { setError('El teléfono de contacto es obligatorio.'); return; }
+    if (contactPhone.replace(/\D/g, '').length < 7) { setError('Ingresa un teléfono válido.'); return; }
+    if (!description.trim()) { setError('La descripción es obligatoria.'); return; }
+
+    setLoading(true);
+    try {
+      await createBusiness(userId, {
+        ownerId:      userId,
+        businessName: businessName.trim(),
+        category,
+        contactPhone: contactPhone.trim(),
+        logoURL:      '',
+        description:  description.trim(),
+        municipality,
+        department:   'casanare',
+      });
+      onSuccess();
+    } catch (err) {
+      setError('No se pudo registrar el negocio. Intenta de nuevo.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className={styles.page}>
+      <div className={styles.header}>
+        <button className={styles.backBtn} onClick={onBack} type="button" aria-label="Volver">
+          ←
+        </button>
+        <h1 className={styles.title}>Registrar negocio</h1>
+      </div>
+
+      <div className={styles.intro}>
+        <p>Completa los datos de tu negocio. Después podrás activar tu membresía para publicar con visibilidad preferencial.</p>
+      </div>
+
+      <form className={styles.form} onSubmit={(e) => { void handleSubmit(e); }} noValidate>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="businessName">Nombre del negocio *</label>
+          <input
+            id="businessName"
+            className={styles.input}
+            type="text"
+            placeholder="Ej: Transportes Casanare"
+            value={businessName}
+            onChange={(e) => setBusinessName(e.target.value)}
+            maxLength={100}
+            required
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="category">Categoría *</label>
+          <select
+            id="category"
+            className={styles.select}
+            value={category}
+            onChange={(e) => setCategory(e.target.value as BusinessCategory)}
+          >
+            {BUSINESS_CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="municipality">Municipio *</label>
+          <select
+            id="municipality"
+            className={styles.select}
+            value={municipality}
+            onChange={(e) => setMunicipality(e.target.value as CasanareMunicipality)}
+          >
+            {CASANARE_MUNICIPALITIES.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="phone">Teléfono de contacto *</label>
+          <input
+            id="phone"
+            className={styles.input}
+            type="tel"
+            placeholder="3101234567"
+            value={contactPhone}
+            onChange={(e) => setContactPhone(e.target.value)}
+            maxLength={15}
+            required
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="description">
+            Descripción del negocio * <span className={styles.charCount}>({description.length}/300)</span>
+          </label>
+          <textarea
+            id="description"
+            className={styles.textarea}
+            placeholder="Cuéntale a tus clientes qué ofreces..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            maxLength={300}
+            rows={4}
+            required
+          />
+        </div>
+
+        {error && (
+          <div className={styles.errorBox} role="alert">
+            {error}
+          </div>
+        )}
+
+        <button className={styles.submitBtn} type="submit" disabled={loading}>
+          {loading ? 'Registrando...' : 'Registrar negocio'}
+        </button>
+      </form>
+    </main>
+  );
+}
