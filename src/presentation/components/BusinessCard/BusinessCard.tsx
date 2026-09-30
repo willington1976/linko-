@@ -9,34 +9,38 @@ interface BusinessCardProps {
 }
 
 export function BusinessCard({ business, onClick }: BusinessCardProps) {
+  const initial = business.businessName.charAt(0).toUpperCase();
+  const isActive = business.membership.status === 'active';
+
   return (
     <article
       className={styles.card}
-      onClick={() => onClick?.(business.id)}
+      onClick={() => onClick?.(business.businessId)}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && onClick?.(business.id)}
-      aria-label={business.name}
+      onKeyDown={(e) => e.key === 'Enter' && onClick?.(business.businessId)}
+      aria-label={business.businessName}
     >
       <div className={styles.logoWrapper}>
-        {business.logo ? (
-          <img src={business.logo} alt={business.name} className={styles.logo} loading="lazy" />
+        {business.logoURL ? (
+          <img
+            src={business.logoURL}
+            alt={business.businessName}
+            className={styles.logo}
+            loading="lazy"
+          />
         ) : (
-          <div className={styles.logoPlaceholder}>
-            {business.name.charAt(0).toUpperCase()}
-          </div>
+          <div className={styles.logoPlaceholder}>{initial}</div>
         )}
       </div>
 
       <div className={styles.body}>
         <div className={styles.header}>
-          <h3 className={styles.name}>{business.name}</h3>
-          {business.membershipActive && (
-            <span className={styles.memberBadge}>⭐ Miembro</span>
-          )}
+          <h3 className={styles.name}>{business.businessName}</h3>
+          {isActive && <span className={styles.memberBadge}>Miembro</span>}
         </div>
         <p className={styles.description}>{business.description}</p>
-        <span className={styles.location}>📍 {business.location}</span>
+        <span className={styles.location}>{business.municipality}, {business.department}</span>
       </div>
     </article>
   );

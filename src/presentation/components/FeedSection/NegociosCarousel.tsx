@@ -15,12 +15,12 @@ export function NegociosCarousel({ businesses, onCardClick }: NegociosCarouselPr
   return (
     <section className={styles.section} aria-label="Negocios cerca">
       <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>⭐ Negocios cerca</h2>
-        <span className={styles.sectionSub}>Con membresía activa</span>
+        <h2 className={styles.sectionTitle}>Negocios cerca</h2>
+        <span className={styles.sectionSub}>Con membresia activa</span>
       </div>
       <div className={styles.carousel} role="list">
         {businesses.map((biz) => (
-          <div key={biz.id} className={styles.carouselItem} role="listitem">
+          <div key={biz.businessId} className={styles.carouselItem} role="listitem">
             <BusinessCard business={biz} onClick={onCardClick} />
           </div>
         ))}

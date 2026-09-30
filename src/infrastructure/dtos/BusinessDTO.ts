@@ -1,37 +1,37 @@
 // src/infrastructure/dtos/BusinessDTO.ts
 
 import type { Timestamp } from 'firebase/firestore';
-import type { BusinessCategory } from '../../domain/entities/Business';
-import { VALID_BUSINESS_CATEGORIES } from '../../domain/entities/Business';
-import type { Business } from '../../domain/entities/Business';
+import type { BusinessCategory, Business } from '../../domain/entities/Business';
+import { VALID_BUSINESS_CATEGORIES, DEFAULT_MEMBERSHIP } from '../../domain/entities/Business';
 import { DTOValidationError } from './DTOValidationError';
 
 export interface BusinessDTO {
-  id: string;
-  name: string;
+  businessId: string;
+  businessName: string;
   description: string;
   category: string;
-  phone: string;
-  address: string;
-  location: string;
-  logo?: string;
+  contactPhone: string;
+  logoURL: string;
+  municipality: string;
+  department: string;
   ownerId: string;
-  membershipActive: boolean;
-  membershipUntil: Timestamp | null;
-  verified: boolean;
+  membership: {
+    status: string;
+    plan: string;
+    price: number;
+    startDate: Timestamp | null;
+    expiresAt: Timestamp | null;
+    wompiPaymentId: string | null;
+  };
   createdAt: Timestamp;
 }
 
 export function mapDTOToBusiness(dto: BusinessDTO): Business {
-  const id = dto.id;
+  const id = dto.businessId;
 
   const category = dto.category;
   if (!VALID_BUSINESS_CATEGORIES.includes(category as BusinessCategory)) {
-    throw new DTOValidationError(id, 'category', `valor inválido: ${category}`);
-  }
-
-  if (typeof dto.membershipActive !== 'boolean') {
-    throw new DTOValidationError(id, 'membershipActive', 'debe ser boolean');
+    throw new DTOValidationError(id, 'category', `valor invalido: ${category}`);
   }
 
   if (
@@ -41,19 +41,27 @@ export function mapDTOToBusiness(dto: BusinessDTO): Business {
     throw new DTOValidationError(id, 'createdAt', 'debe ser Firestore Timestamp');
   }
 
+  const mem = dto.membership ?? {};
+
   return {
-    id,
-    name:             dto.name,
-    description:      dto.description,
-    category:         category as BusinessCategory,
-    phone:            dto.phone,
-    address:          dto.address,
-    location:         dto.location,
-    logo:             dto.logo,
-    ownerId:          dto.ownerId,
-    membershipActive: dto.membershipActive,
-    membershipUntil:  dto.membershipUntil ? dto.membershipUntil.toDate() : null,
-    verified:         typeof dto.verified === 'boolean' ? dto.verified : false,
-    createdAt:        dto.createdAt.toDate(),
+    businessId:   id,
+    businessName: dto.businessName ?? '',
+    description:  dto.description ?? '',
+    category:     category as BusinessCategory,
+    contactPhone: dto.contactPhone ?? '',
+    logoURL:      dto.logoURL ?? '',
+    municipality: dto.municipality ?? '',
+    department:   dto.department ?? 'casanare',
+    ownerId:      dto.ownerId ?? '',
+    createdAt:    dto.createdAt.toDate(),
+    membership: {
+      ...DEFAULT_MEMBERSHIP,
+      status:         (mem.status as Business['membership']['status']) ?? 'inactive',
+      plan:           (mem.plan   as Business['membership']['plan'])   ?? 'monthly',
+      price:          mem.price ?? 10000,
+      startDate:      mem.startDate ? mem.startDate.toDate() : null,
+      expiresAt:      mem.expiresAt ? mem.expiresAt.toDate() : null,
+      wompiPaymentId: mem.wompiPaymentId ?? null,
+    },
   };
 }

@@ -47,14 +47,17 @@ export const DEFAULT_MEMBERSHIP: BusinessMembership = {
 };
 
 export const BUSINESS_CATEGORIES: { value: BusinessCategory; label: string }[] = [
-  { value: 'restaurante',   label: 'Restaurante / Alimentación' },
-  { value: 'transporte',    label: 'Transporte' },
-  { value: 'construccion',  label: 'Construcción' },
-  { value: 'salud',         label: 'Salud y Bienestar' },
-  { value: 'educacion',     label: 'Educación' },
-  { value: 'tecnologia',    label: 'Tecnología' },
-  { value: 'comercio',      label: 'Comercio / Tienda' },
-  { value: 'servicios',     label: 'Servicios Generales' },
-  { value: 'agropecuario',  label: 'Agropecuario' },
-  { value: 'otro',          label: 'Otro' },
+  { value: 'restaurante',  label: 'Restaurante / Alimentacion' },
+  { value: 'transporte',   label: 'Transporte' },
+  { value: 'construccion', label: 'Construccion' },
+  { value: 'salud',        label: 'Salud y Bienestar' },
+  { value: 'educacion',    label: 'Educacion' },
+  { value: 'tecnologia',   label: 'Tecnologia' },
+  { value: 'comercio',     label: 'Comercio / Tienda' },
+  { value: 'servicios',    label: 'Servicios Generales' },
+  { value: 'agropecuario', label: 'Agropecuario' },
+  { value: 'otro',         label: 'Otro' },
 ];
+
+// Alias para compatibilidad con archivos existentes
+export const VALID_BUSINESS_CATEGORIES: BusinessCategory[] = BUSINESS_CATEGORIES.map((c) => c.value);
