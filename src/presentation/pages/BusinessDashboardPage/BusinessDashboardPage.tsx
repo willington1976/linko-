@@ -35,14 +35,16 @@ export function BusinessDashboardPage({
     return (
       <main className={styles.page}>
         <div className={styles.header}>
-          <button className={styles.backBtn} onClick={onBack} type="button" aria-label="Volver">←</button>
+          <button className={styles.backBtn} onClick={onBack} type="button" aria-label="Volver">
+            &larr;
+          </button>
           <h1 className={styles.title}>Mi negocio</h1>
         </div>
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>🏪</div>
-          <h2 className={styles.emptyTitle}>Aún no tienes un negocio registrado</h2>
+          <h2 className={styles.emptyTitle}>Aun no tienes un negocio registrado</h2>
           <p className={styles.emptyText}>
-            Registra tu negocio para publicar con visibilidad preferencial y llegar a más clientes en Casanare.
+            Registra tu negocio para publicar con visibilidad preferencial y llegar a mas clientes en Casanare.
           </p>
           <button className={styles.primaryBtn} onClick={onGoToRegister} type="button">
             Registrar mi negocio
@@ -61,17 +63,20 @@ export function BusinessDashboardPage({
   };
 
   const expiresText = business.membership.expiresAt
-    ? `Vence el ${business.membership.expiresAt.toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' })}`
+    ? `Vence el ${business.membership.expiresAt.toLocaleDateString('es-CO', {
+        day: '2-digit', month: 'long', year: 'numeric',
+      })}`
     : null;
 
   return (
     <main className={styles.page}>
       <div className={styles.header}>
-        <button className={styles.backBtn} onClick={onBack} type="button" aria-label="Volver">←</button>
+        <button className={styles.backBtn} onClick={onBack} type="button" aria-label="Volver">
+          &larr;
+        </button>
         <h1 className={styles.title}>Mi negocio</h1>
       </div>
 
-      {/* Perfil del negocio */}
       <div className={styles.profileCard}>
         <div className={styles.profileAvatar}>
           {business.logoURL
@@ -86,15 +91,14 @@ export function BusinessDashboardPage({
         </div>
       </div>
 
-      {/* Estado membresía */}
       <div className={`${styles.membershipCard} ${styles[`membership_${membershipStatus}`]}`}>
         <div className={styles.membershipTop}>
           <div>
-            <p className={styles.membershipLabel}>Membresía</p>
+            <p className={styles.membershipLabel}>Membresia</p>
             <p className={styles.membershipStatus}>{membershipLabel[membershipStatus] ?? 'Inactiva'}</p>
           </div>
           <div className={`${styles.membershipBadge} ${styles[`badge_${membershipStatus}`]}`}>
-            {membershipStatus === 'active' ? '✓ Activa' : membershipStatus === 'expired' ? '✗ Vencida' : '— Inactiva'}
+            {membershipStatus === 'active' ? 'Activa' : membershipStatus === 'expired' ? 'Vencida' : 'Inactiva'}
           </div>
         </div>
 
@@ -106,22 +110,21 @@ export function BusinessDashboardPage({
           <div className={styles.benefitsList}>
             <p className={styles.benefitsTitle}>Beneficios activos:</p>
             <ul className={styles.benefits}>
-              <li>✓ Publicaciones ilimitadas</li>
-              <li>✓ Hasta 5 fotos por publicación</li>
-              <li>✓ Apareces en el slider principal</li>
-              <li>✓ Badge "Negocio Verificado"</li>
+              <li>Publicaciones ilimitadas</li>
+              <li>Hasta 5 fotos por publicacion</li>
+              <li>Apareces en el slider principal</li>
+              <li>Badge "Negocio Verificado"</li>
             </ul>
           </div>
         )}
 
         {membershipStatus !== 'active' && (
           <button className={styles.activateBtn} onClick={onGoToMembership} type="button">
-            {membershipStatus === 'expired' ? 'Renovar membresía — $10.000/mes' : 'Activar membresía — $10.000/mes'}
+            {membershipStatus === 'expired' ? 'Renovar membresia - $10.000/mes' : 'Activar membresia - $10.000/mes'}
           </button>
         )}
       </div>
 
-      {/* Acciones */}
       <div className={styles.actions}>
         <button
           className={`${styles.actionCard} ${!hasMembership ? styles.actionDisabled : ''}`}
@@ -132,7 +135,7 @@ export function BusinessDashboardPage({
           <div className={styles.actionText}>
             <span className={styles.actionTitle}>Mis publicaciones</span>
             <span className={styles.actionSub}>
-              {hasMembership ? 'Ver y gestionar publicaciones' : 'Requiere membresía activa'}
+              {hasMembership ? 'Ver y gestionar publicaciones' : 'Requiere membresia activa'}
             </span>
           </div>
           <span className={styles.actionArrow}>›</span>
@@ -145,17 +148,16 @@ export function BusinessDashboardPage({
         >
           <span className={styles.actionIcon}>💳</span>
           <div className={styles.actionText}>
-            <span className={styles.actionTitle}>Membresía</span>
+            <span className={styles.actionTitle}>Membresia</span>
             <span className={styles.actionSub}>Gestionar plan de pago</span>
           </div>
           <span className={styles.actionArrow}>›</span>
         </button>
       </div>
 
-      {/* Info plan */}
       <div className={styles.planInfo}>
         <p className={styles.planInfoText}>
-          Plan mensual · <strong>$10.000 COP</strong> · Se renueva automáticamente
+          Plan mensual · <strong>$10.000 COP</strong> · Se renueva automaticamente
         </p>
       </div>
     </main>

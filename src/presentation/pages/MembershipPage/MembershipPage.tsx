@@ -22,11 +22,11 @@ function buildWompiUrl(params: {
 }): string {
   const base = 'https://checkout.wompi.co/p/';
   const query = new URLSearchParams({
-    'public-key':        params.publicKey,
-    currency:            params.currency,
-    'amount-in-cents':   String(params.amountInCents),
-    reference:           params.reference,
-    'redirect-url':      params.redirectUrl,
+    'public-key':       params.publicKey,
+    currency:           params.currency,
+    'amount-in-cents':  String(params.amountInCents),
+    reference:          params.reference,
+    'redirect-url':     params.redirectUrl,
   });
   return `${base}?${query.toString()}`;
 }
@@ -36,7 +36,6 @@ export function MembershipPage({ userId, onBack, onSuccess }: MembershipPageProp
   const [activating, setActivating]   = useState(false);
   const [error, setError]             = useState<string | null>(null);
 
-  // Simulación de activación en desarrollo (cuando no hay Wompi configurado)
   const handleSimulateActivation = async () => {
     setError(null);
     setActivating(true);
@@ -51,13 +50,13 @@ export function MembershipPage({ userId, onBack, onSuccess }: MembershipPageProp
         price:          10000,
         startDate:      now,
         expiresAt,
-        wompiPaymentId: 'sim_' + Date.now(),
+        wompiPaymentId: 'sim_' + String(Date.now()),
       });
 
       refresh();
       onSuccess();
     } catch (err) {
-      setError('No se pudo activar la membresía. Intenta de nuevo.');
+      setError('No se pudo activar la membresia. Intenta de nuevo.');
       console.error(err);
     } finally {
       setActivating(false);
@@ -66,12 +65,12 @@ export function MembershipPage({ userId, onBack, onSuccess }: MembershipPageProp
 
   const handleWompiPay = () => {
     if (!WOMPI_PUBLIC_KEY) return;
-    const reference  = `linko_mem_${userId}_${Date.now()}`;
+    const reference   = `linko_mem_${userId}_${String(Date.now())}`;
     const redirectUrl = `${window.location.origin}/business/dashboard`;
     const url = buildWompiUrl({
-      publicKey:      WOMPI_PUBLIC_KEY,
-      currency:       'COP',
-      amountInCents:  1000000, // $10.000 COP
+      publicKey:     WOMPI_PUBLIC_KEY,
+      currency:      'COP',
+      amountInCents: 1000000,
       reference,
       redirectUrl,
     });
@@ -94,19 +93,21 @@ export function MembershipPage({ userId, onBack, onSuccess }: MembershipPageProp
   return (
     <main className={styles.page}>
       <div className={styles.header}>
-        <button className={styles.backBtn} onClick={onBack} type="button" aria-label="Volver">←</button>
-        <h1 className={styles.title}>Membresía</h1>
+        <button className={styles.backBtn} onClick={onBack} type="button" aria-label="Volver">
+          &larr;
+        </button>
+        <h1 className={styles.title}>Membresia</h1>
       </div>
 
       {isActive && (
         <div className={styles.activeNotice}>
           <span className={styles.activeIcon}>✓</span>
           <div>
-            <p className={styles.activeTitle}>Tu membresía está activa</p>
+            <p className={styles.activeTitle}>Tu membresia esta activa</p>
             {business?.membership.expiresAt && (
               <p className={styles.activeSub}>
                 Vence el {business.membership.expiresAt.toLocaleDateString('es-CO', {
-                  day: '2-digit', month: 'long', year: 'numeric'
+                  day: '2-digit', month: 'long', year: 'numeric',
                 })}
               </p>
             )}
@@ -130,7 +131,7 @@ export function MembershipPage({ userId, onBack, onSuccess }: MembershipPageProp
           </li>
           <li className={styles.benefit}>
             <span className={styles.benefitIcon}>📷</span>
-            <span>Hasta 5 fotos por publicación</span>
+            <span>Hasta 5 fotos por publicacion</span>
           </li>
           <li className={styles.benefit}>
             <span className={styles.benefitIcon}>⭐</span>
@@ -142,7 +143,7 @@ export function MembershipPage({ userId, onBack, onSuccess }: MembershipPageProp
           </li>
           <li className={styles.benefit}>
             <span className={styles.benefitIcon}>🔄</span>
-            <span>Se renueva automáticamente cada mes</span>
+            <span>Se renueva automaticamente cada mes</span>
           </li>
         </ul>
       </div>
@@ -160,28 +161,21 @@ export function MembershipPage({ userId, onBack, onSuccess }: MembershipPageProp
               type="button"
               disabled={activating}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect width="24" height="24" rx="4" fill="#6C2BD9"/>
-                <path d="M6 12h12M12 6l6 6-6 6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              {isExpired ? 'Renovar con Wompi — $10.000' : 'Pagar con Wompi — $10.000'}
+              {isExpired ? 'Renovar con Wompi - $10.000' : 'Pagar con Wompi - $10.000'}
             </button>
           ) : (
             <div className={styles.devMode}>
-              <p className={styles.devNotice}>
-                ⚠️ Modo desarrollo — Wompi no configurado
-              </p>
+              <p className={styles.devNotice}>Modo desarrollo - Wompi no configurado</p>
               <button
                 className={styles.simulateBtn}
                 onClick={() => { void handleSimulateActivation(); }}
                 type="button"
                 disabled={activating}
               >
-                {activating ? 'Activando...' : 'Simular activación (dev)'}
+                {activating ? 'Activando...' : 'Simular activacion (dev)'}
               </button>
             </div>
           )}
-
           <p className={styles.payNote}>
             Pago seguro procesado por Wompi · Cancela cuando quieras
           </p>
@@ -191,7 +185,7 @@ export function MembershipPage({ userId, onBack, onSuccess }: MembershipPageProp
       {isActive && (
         <div className={styles.paySection}>
           <p className={styles.renewNote}>
-            Tu membresía se renueva automáticamente. Si deseas cancelarla, contáctanos.
+            Tu membresia se renueva automaticamente. Si deseas cancelarla, contactanos.
           </p>
         </div>
       )}

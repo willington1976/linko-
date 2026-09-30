@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useCreatePublication } from '../../../application/hooks/useCreatePublication';
+import { useBusiness } from '../../../application/hooks/useBusiness';
 import { getFieldError } from '../../../domain/validation/publicationValidation';
 import { CASANARE_MUNICIPALITIES } from '../../../domain/entities/Publication';
 import type { PublicationCategory, PublicationIntent, CasanareMunicipality } from '../../../domain/entities/Publication';
@@ -13,8 +14,15 @@ interface CreatePublicationPageProps {
   onBack: () => void;
 }
 
+const MAX_PHOTOS_PERSONAL  = 1;
+const MAX_PHOTOS_BUSINESS  = 5;
+
 export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePublicationPageProps) {
   const { loading, uploadProgress, error, submit, reset } = useCreatePublication(authorId);
+  const { hasMembership } = useBusiness(authorId);
+
+  const maxPhotos      = hasMembership ? MAX_PHOTOS_BUSINESS : MAX_PHOTOS_PERSONAL;
+  const publicationType = hasMembership ? 'business' : 'personal';
 
   const [title, setTitle]               = useState('');
   const [description, setDescription]   = useState('');
@@ -29,7 +37,7 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []).slice(0, 1);
+    const files = Array.from(e.target.files ?? []).slice(0, maxPhotos);
     setPhotoFiles(files);
   };
 
@@ -39,12 +47,15 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
     reset();
 
     const result = await submit({
-      title, description, category, intent,
+      title,
+      description,
+      category,
+      intent,
       department: 'casanare',
       municipality,
       contactPhone,
       price: price ? Number(price) : undefined,
-      publicationType: 'personal',
+      publicationType,
       photoFiles,
     });
 
@@ -56,15 +67,20 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
   return (
     <main className={styles.page}>
       <div className={styles.header}>
-        <button className={styles.backBtn} onClick={onBack} aria-label="Volver">
-          {'<'}
+        <button className={styles.backBtn} onClick={onBack} aria-label="Volver" type="button">
+          &larr;
         </button>
         <h1 className={styles.pageTitle}>Nueva publicacion</h1>
       </div>
 
+      {hasMembership && (
+        <div className={styles.businessBanner}>
+          <span>⭐ Publicacion de negocio · hasta {String(MAX_PHOTOS_BUSINESS)} fotos</span>
+        </div>
+      )}
+
       <form className={styles.form} onSubmit={(e) => { void handleSubmit(e); }} noValidate>
 
-        {/* Categoria */}
         <div className={styles.field}>
           <label className={styles.label} htmlFor="category">Categoria</label>
           <select
@@ -81,7 +97,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           </select>
         </div>
 
-        {/* Intent */}
         <div className={styles.field}>
           <label className={styles.label}>Que haces?</label>
           <div className={styles.intentGroup}>
@@ -98,7 +113,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           </div>
         </div>
 
-        {/* Titulo */}
         <div className={styles.field}>
           <label className={styles.label} htmlFor="title">Titulo *</label>
           <input
@@ -113,7 +127,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           {fe('title') && <span className={styles.errorMsg}>{fe('title')}</span>}
         </div>
 
-        {/* Descripcion */}
         <div className={styles.field}>
           <label className={styles.label} htmlFor="description">Descripcion *</label>
           <textarea
@@ -129,7 +142,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           {fe('description') && <span className={styles.errorMsg}>{fe('description')}</span>}
         </div>
 
-        {/* Precio */}
         <div className={styles.field}>
           <label className={styles.label} htmlFor="price">Precio (COP) - opcional</label>
           <input
@@ -143,7 +155,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           />
         </div>
 
-        {/* Municipio */}
         <div className={styles.field}>
           <label className={styles.label} htmlFor="municipality">Municipio *</label>
           <div className={styles.locationRow}>
@@ -166,7 +177,6 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           </div>
         </div>
 
-        {/* Telefono */}
         <div className={styles.field}>
           <label className={styles.label} htmlFor="phone">Telefono de contacto *</label>
           <input
@@ -180,23 +190,36 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
           {fe('contactPhone') && <span className={styles.errorMsg}>{fe('contactPhone')}</span>}
         </div>
 
-        {/* Foto */}
         <div className={styles.field}>
-          <label className={styles.label}>Foto (max. 1)</label>
+          <label className={styles.label}>
+            {hasMembership
+              ? `Fotos (max. ${String(MAX_PHOTOS_BUSINESS)})`
+              : `Foto (max. ${String(MAX_PHOTOS_PERSONAL)})`}
+          </label>
           <button
             type="button"
             className={styles.photoBtn}
             onClick={() => fileRef.current?.click()}
           >
-            {photoFiles.length > 0 ? photoFiles[0]!.name : 'Agregar foto'}
+            {photoFiles.length > 0
+              ? `${String(photoFiles.length)} foto${photoFiles.length > 1 ? 's' : ''} seleccionada${photoFiles.length > 1 ? 's' : ''}`
+              : 'Agregar foto'}
           </button>
           <input
             ref={fileRef}
             type="file"
             accept="image/*"
+            multiple={hasMembership}
             className={styles.hidden}
             onChange={handlePhotoChange}
           />
+          {photoFiles.length > 0 && (
+            <div className={styles.photoPreviewRow}>
+              {photoFiles.map((f, i) => (
+                <span key={i} className={styles.photoName}>{f.name}</span>
+              ))}
+            </div>
+          )}
         </div>
 
         {loading && uploadProgress > 0 && uploadProgress < 100 && (
@@ -211,6 +234,7 @@ export function CreatePublicationPage({ authorId, onSuccess, onBack }: CreatePub
         <button type="submit" className={styles.submitBtn} disabled={loading}>
           {loading ? 'Publicando...' : 'Publicar'}
         </button>
+
       </form>
     </main>
   );
