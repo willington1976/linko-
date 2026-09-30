@@ -15,8 +15,8 @@ export function NuevoHoyCarousel({ publications, onCardClick }: NuevoHoyCarousel
   return (
     <section className={styles.section} aria-label="Nuevo hoy">
       <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>🆕 Nuevo hoy</h2>
-        <span className={styles.sectionSub}>Últimas 3 horas</span>
+        <h2 className={styles.sectionTitle}>Nuevo hoy</h2>
+        <span className={styles.sectionSub}>Ultimas 3 horas</span>
       </div>
       <div className={styles.carousel} role="list">
         {publications.map((pub) => (

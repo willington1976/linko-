@@ -23,13 +23,13 @@ export function MainFeed({ publications, loading, error, onCardClick }: MainFeed
   }
 
   if (error) {
-    return <p className={styles.error}>⚠️ {error}</p>;
+    return <p className={styles.error}>{error}</p>;
   }
 
   if (publications.length === 0) {
     return (
       <div className={styles.empty}>
-        <span className={styles.emptyIcon}>📭</span>
+        <span className={styles.emptyIcon}>🔭</span>
         No hay publicaciones activas en este momento.
       </div>
     );
@@ -37,7 +37,7 @@ export function MainFeed({ publications, loading, error, onCardClick }: MainFeed
 
   return (
     <div className={styles.feedList}>
-      <h2 className={styles.feedListTitle}>📌 Publicaciones recientes</h2>
+      <h2 className={styles.feedListTitle}>Publicaciones recientes</h2>
       {publications.map((pub) => (
         <PublicationCard key={pub.id} publication={pub} onClick={onCardClick} />
       ))}
