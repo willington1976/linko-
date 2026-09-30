@@ -132,6 +132,7 @@ export function App() {
             user={user}
             onSignOut={logout}
             onRegistrarNegocio={goRegistroNegocio}
+            onGoToBusinessDashboard={goBusinessDashboard}
           />
         )}
 
