@@ -8,10 +8,12 @@ interface MainFeedProps {
   publications: Publication[];
   loading: boolean;
   error: string | null;
+  currentUserId?: string;
   onCardClick: (id: string) => void;
+  onEditClick?: (id: string) => void;
 }
 
-export function MainFeed({ publications, loading, error, onCardClick }: MainFeedProps) {
+export function MainFeed({ publications, loading, error, currentUserId, onCardClick, onEditClick }: MainFeedProps) {
   if (loading) {
     return (
       <div className={styles.feedList}>
@@ -39,7 +41,13 @@ export function MainFeed({ publications, loading, error, onCardClick }: MainFeed
     <div className={styles.feedList}>
       <h2 className={styles.feedListTitle}>Publicaciones recientes</h2>
       {publications.map((pub) => (
-        <PublicationCard key={pub.id} publication={pub} onClick={onCardClick} />
+        <PublicationCard
+          key={pub.id}
+          publication={pub}
+          currentUserId={currentUserId}
+          onClick={onCardClick}
+          onEdit={onEditClick}
+        />
       ))}
     </div>
   );

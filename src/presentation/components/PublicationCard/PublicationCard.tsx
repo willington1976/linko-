@@ -6,7 +6,9 @@ import styles from './PublicationCard.module.css';
 
 interface PublicationCardProps {
   publication: Publication;
+  currentUserId?: string;
   onClick?: (id: string) => void;
+  onEdit?: (id: string) => void;
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -22,11 +24,12 @@ const INTENT_COLOR: Record<string, string> = {
   ofrezco: styles.intentOfrezco,
 };
 
-export function PublicationCard({ publication, onClick }: PublicationCardProps) {
+export function PublicationCard({ publication, currentUserId, onClick, onEdit }: PublicationCardProps) {
   const hasPhotos   = publication.photos.length > 0;
   const firstPhoto  = publication.photos[0];
   const extraPhotos = publication.photos.length - 1;
   const initial     = (publication.authorName ?? 'U').charAt(0).toUpperCase();
+  const isOwner     = !!currentUserId && currentUserId === publication.authorId;
 
   return (
     <article
@@ -56,9 +59,28 @@ export function PublicationCard({ publication, onClick }: PublicationCardProps) 
             <TTLBadge expiresAt={publication.expiresAt} />
           </div>
         </div>
-        <span className={`${styles.intentPill} ${INTENT_COLOR[publication.intent] ?? ''}`}>
-          {publication.intent === 'ofrezco' ? 'Ofrezco' : 'Busco'}
-        </span>
+        <div className={styles.headerRight}>
+          <span className={`${styles.intentPill} ${INTENT_COLOR[publication.intent] ?? ''}`}>
+            {publication.intent === 'ofrezco' ? 'Ofrezco' : 'Busco'}
+          </span>
+          {isOwner && (
+            <button
+              className={styles.editBtn}
+              type="button"
+              title="Editar publicación"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit?.(publication.id);
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 1 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              Editar
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Foto principal */}

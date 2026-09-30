@@ -6,6 +6,7 @@ import { BottomNav } from './presentation/components/BottomNav/BottomNav';
 import { HomePage }  from './presentation/pages/HomePage/HomePage';
 import { PublicationDetailPage }  from './presentation/pages/PublicationDetailPage/PublicationDetailPage';
 import { CreatePublicationPage }  from './presentation/pages/CreatePublicationPage/CreatePublicationPage';
+import { EditPublicationPage }    from './presentation/pages/EditPublicationPage/EditPublicationPage';
 import { MyPublicationsPage }     from './presentation/pages/MyPublicationsPage/MyPublicationsPage';
 import { BusinessRegisterPage }   from './presentation/pages/BusinessRegistrationPage/BusinessRegisterPage';
 import { BusinessDashboardPage }  from './presentation/pages/BusinessDashboardPage/BusinessDashboardPage';
@@ -21,6 +22,7 @@ type Route =
   | { screen: 'home' }
   | { screen: 'detail'; publicationId: string }
   | { screen: 'create' }
+  | { screen: 'edit'; publicationId: string }
   | { screen: 'profile' }
   | { screen: 'mis-publicaciones' }
   | { screen: 'search' }
@@ -37,6 +39,7 @@ export function App() {
   const goHome              = () => { setRoute({ screen: 'home' }); setActiveTab('feed'); };
   const goCreate            = () => setRoute({ screen: 'create' });
   const goDetail            = (publicationId: string) => setRoute({ screen: 'detail', publicationId });
+  const goEdit              = (publicationId: string) => setRoute({ screen: 'edit', publicationId });
   const goRegistroNegocio   = () => setRoute({ screen: 'registro-negocio' });
   const goBusinessDashboard = () => setRoute({ screen: 'business-dashboard' });
   const goMembership        = () => setRoute({ screen: 'membership' });
@@ -50,8 +53,9 @@ export function App() {
   };
 
   const hideChrome =
-    route.screen === 'create'           ||
-    route.screen === 'registro-negocio' ||
+    route.screen === 'create'             ||
+    route.screen === 'edit'               ||
+    route.screen === 'registro-negocio'   ||
     route.screen === 'business-dashboard' ||
     route.screen === 'membership';
 
@@ -71,7 +75,9 @@ export function App() {
 
         {route.screen === 'home' && (
           <HomePage
+            currentUserId={user.uid}
             onPublicationClick={goDetail}
+            onEditClick={goEdit}
             onBusinessClick={goBusinessDashboard}
             onPublicarClick={goCreate}
             searchQuery={searchQuery}
@@ -87,6 +93,15 @@ export function App() {
 
         {route.screen === 'create' && (
           <CreatePublicationPage
+            authorId={user.uid}
+            onSuccess={(id) => { goDetail(id); }}
+            onBack={goHome}
+          />
+        )}
+
+        {route.screen === 'edit' && (
+          <EditPublicationPage
+            publicationId={route.publicationId}
             authorId={user.uid}
             onSuccess={(id) => { goDetail(id); }}
             onBack={goHome}

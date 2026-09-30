@@ -19,14 +19,18 @@ const CATEGORIES: { id: PublicationCategory | 'todas'; label: string }[] = [
 ];
 
 interface HomePageProps {
+  currentUserId?:     string;
   onPublicationClick: (id: string) => void;
+  onEditClick?:       (id: string) => void;
   onBusinessClick:    (id: string) => void;
   onPublicarClick:    () => void;
   searchQuery?:       string;
 }
 
 export function HomePage({
+  currentUserId,
   onPublicationClick,
+  onEditClick,
   onBusinessClick,
   onPublicarClick,
   searchQuery,
@@ -44,7 +48,6 @@ export function HomePage({
 
   return (
     <main className={styles.page}>
-      {/* Filtro por categoria */}
       <div className={styles.categoryBar} role="tablist" aria-label="Filtrar por categoria">
         {CATEGORIES.map((cat) => (
           <button
@@ -61,7 +64,6 @@ export function HomePage({
         ))}
       </div>
 
-      {/* Carruseles solo sin busqueda activa */}
       {!isSearching && activeCategory === 'todas' && (
         <NuevoHoyCarousel publications={nuevoHoy} onCardClick={onPublicationClick} />
       )}
@@ -69,19 +71,19 @@ export function HomePage({
         <NegociosCarousel businesses={businesses} onCardClick={onBusinessClick} />
       )}
 
-      {/* Indicador de busqueda activa */}
       {isSearching && (
         <p className={styles.searchHint}>
           Resultados para: <strong>{searchQuery}</strong>
         </p>
       )}
 
-      {/* Feed principal */}
       <MainFeed
         publications={publications}
         loading={loading}
         error={error}
+        currentUserId={currentUserId}
         onCardClick={onPublicationClick}
+        onEditClick={onEditClick}
       />
 
       {!loading && (
